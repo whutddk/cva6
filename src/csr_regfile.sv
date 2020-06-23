@@ -971,11 +971,9 @@ module csr_regfile #(
     assign tw_o             = mstatus_q.tw;
     assign tsr_o            = mstatus_q.tsr;
     assign halt_csr_o       = wfi_q;
-`ifdef PITON_ARIANE
-    assign icache_en_o      = icache_q[0];
-`else
+
     assign icache_en_o      = icache_q[0] & (~debug_mode_q);
-`endif
+
     assign dcache_en_o      = dcache_q[0];
 
     // determine if mprv needs to be considered if in debug mode
@@ -990,11 +988,9 @@ module csr_regfile #(
             // floating-point registers
             fcsr_q                 <= 64'b0;
             // debug signals
-`ifdef DROMAJO
-            debug_mode_q           <= 1'b1;
-`else
+
             debug_mode_q           <= 1'b0;
-`endif
+
             dcsr_q                 <= '0;
             dcsr_q.prv             <= riscv::PRIV_LVL_M;
             dpc_q                  <= 64'b0;
@@ -1074,15 +1070,5 @@ module csr_regfile #(
         end
     end
 
-    //-------------
-    // Assertions
-    //-------------
-    //pragma translate_off
-    `ifndef VERILATOR
-        // check that eret and ex are never valid together
-        assert property (
-          @(posedge clk_i) !(eret_o && ex_i.valid))
-        else begin $error("eret and exception should never be valid at the same time"); $stop(); end
-    `endif
-    //pragma translate_on
+
 endmodule

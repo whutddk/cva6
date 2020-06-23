@@ -82,10 +82,7 @@ module controller (
             flush_ex_o             = 1'b1;
 // this is not needed in the case since we
 // have a write-through cache in this case
-`ifndef WT_DCACHE
-            flush_dcache           = 1'b1;
-            fence_active_d         = 1'b1;
-`endif
+
         end
 
         // ---------------------------------
@@ -98,25 +95,10 @@ module controller (
             flush_id_o             = 1'b1;
             flush_ex_o             = 1'b1;
             flush_icache_o         = 1'b1;
-// this is not needed in the case since we
-// have a write-through cache in this case
-`ifndef WT_DCACHE
-            flush_dcache           = 1'b1;
-            fence_active_d         = 1'b1;
-`endif
+
         end
 
-// this is not needed in the case since we
-// have a write-through cache in this case
-`ifndef WT_DCACHE
-        // wait for the acknowledge here
-        if (flush_dcache_ack_i && fence_active_q) begin
-            fence_active_d = 1'b0;
-        // keep the flush dcache signal high as long as we didn't get the acknowledge from the cache
-        end else if (fence_active_q) begin
-            flush_dcache = 1'b1;
-        end
-`endif
+
         // ---------------------------------
         // SFENCE.VMA
         // ---------------------------------

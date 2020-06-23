@@ -423,11 +423,5 @@ module frontend #(
       .fetch_entry_ready_i ( fetch_entry_ready_i  )  // to back-end
     );
 
-    // pragma translate_off
-    `ifndef VERILATOR
-      initial begin
-        assert (FETCH_WIDTH == 32 || FETCH_WIDTH == 64) else $fatal("[frontend] fetch width != not supported");
-      end
-    `endif
-    // pragma translate_on
+
 endmodule
