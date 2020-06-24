@@ -110,13 +110,14 @@ module frontend #(
       .clk_i               ( clk_i                 ),
       .rst_ni              ( rst_ni                ),
       .flush_i             ( icache_dreq_o.kill_s2 ),
-      .valid_i             ( icache_valid_q        ),
-      .serving_unaligned_o ( serving_unaligned     ),
-      .address_i           ( icache_vaddr_q        ),
-      .data_i              ( icache_data_q         ),
-      .valid_o             ( instruction_valid     ),
-      .addr_o              ( addr                  ),
-      .instr_o             ( instr                 )
+
+      .valid_i             ( icache_valid_q        ),//input hand shake with ichcha
+      .serving_unaligned_o ( serving_unaligned     ),//逻辑输出， 表示存在一个未对齐32bit指令在高位没有处理完
+      .address_i           ( icache_vaddr_q        ),//input address of instruction from icache
+      .data_i              ( icache_data_q         ),// input 32bit instruction from icaache
+      .valid_o             ( instruction_valid     ),// output 两个指令输出的握手
+      .addr_o              ( addr                  ),//输出 两个（第二个可以有，看握手） 实际指令的地址（输入地址32bit对齐，输出指令是16bit对齐）
+      .instr_o             ( instr                 )//取指令获得的两个（第二个可以有，看握手） 指令
     );
     // --------------------
     // Branch Prediction
@@ -290,13 +291,13 @@ module frontend #(
         npc_d            = npc_q;
       end
       // 0. Branch Prediction
-      if (bp_valid) begin
+      if (bp_valid) begin //有预测，还有无预测状态？
         fetch_address = predict_address;
         npc_d = predict_address;
       end
-      // 1. Default assignment
+      // 1. Default assignment //强制对齐了
       if (if_ready) npc_d = {fetch_address[riscv::VLEN-1:2], 2'b0}  + 'h4;
-      // 2. Replay instruction fetch
+      // 2. Replay instruction fetch 
       if (replay) npc_d = replay_addr;
       // 3. Control flow change request
       if (is_mispredict) npc_d = resolved_branch_i.target_address;
@@ -315,6 +316,8 @@ module frontend #(
       // 7. Debug
       // enter debug on a hard-coded base-address
       if (set_debug_pc_i) npc_d = ArianeCfg.DmBaseAddress[riscv::VLEN-1:0] + dm::HaltAddress[riscv::VLEN-1:0];
+      
+
       icache_dreq_o.vaddr = fetch_address;
     end
 
@@ -348,7 +351,7 @@ module frontend #(
     end
 
     ras #(
-      .DEPTH  ( ArianeCfg.RASDepth  )
+      .DEPTH  ( ArianeCfg.RASDepth  ) // ArianeCfg.RASDepth = 2
     ) i_ras (
       .clk_i,
       .rst_ni,
