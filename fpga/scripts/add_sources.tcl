@@ -113,19 +113,19 @@ read_verilog -sv {
 ~/ariane/src/cache_subsystem/wt_cache_subsystem.sv 
 ~/ariane/src/clint/axi_lite_interface.sv 
 ~/ariane/src/clint/clint.sv 
-~/ariane/fpga/src/axi2apb/src/axi2apb_wrap.sv 
-~/ariane/fpga/src/axi2apb/src/axi2apb.sv 
-~/ariane/fpga/src/axi2apb/src/axi2apb_64_32.sv 
-~/ariane/fpga/src/apb_timer/apb_timer.sv 
-~/ariane/fpga/src/apb_timer/timer.sv 
-~/ariane/fpga/src/axi_slice/src/axi_w_buffer.sv 
-~/ariane/fpga/src/axi_slice/src/axi_r_buffer.sv
-~/ariane/fpga/src/axi_slice/src/axi_slice_wrap.sv 
-~/ariane/fpga/src/axi_slice/src/axi_slice.sv 
-~/ariane/fpga/src/axi_slice/src/axi_single_slice.sv 
-~/ariane/fpga/src/axi_slice/src/axi_ar_buffer.sv 
-~/ariane/fpga/src/axi_slice/src/axi_b_buffer.sv
-~/ariane/fpga/src/axi_slice/src/axi_aw_buffer.sv 
+		~/ariane/fpga/src/axi2apb/src/axi2apb_wrap.sv 
+		~/ariane/fpga/src/axi2apb/src/axi2apb.sv 
+		~/ariane/fpga/src/axi2apb/src/axi2apb_64_32.sv 
+		~/ariane/fpga/src/apb_timer/apb_timer.sv 
+		~/ariane/fpga/src/apb_timer/timer.sv 
+		~/ariane/fpga/src/axi_slice/src/axi_w_buffer.sv 
+		~/ariane/fpga/src/axi_slice/src/axi_r_buffer.sv
+		~/ariane/fpga/src/axi_slice/src/axi_slice_wrap.sv 
+		~/ariane/fpga/src/axi_slice/src/axi_slice.sv 
+		~/ariane/fpga/src/axi_slice/src/axi_single_slice.sv 
+		~/ariane/fpga/src/axi_slice/src/axi_ar_buffer.sv 
+		~/ariane/fpga/src/axi_slice/src/axi_b_buffer.sv
+		~/ariane/fpga/src/axi_slice/src/axi_aw_buffer.sv 
 ~/ariane/src/axi_node/src/axi_regs_top.sv 
 ~/ariane/src/axi_node/src/axi_BR_allocator.sv 
 ~/ariane/src/axi_node/src/axi_BW_allocator.sv 
@@ -214,23 +214,23 @@ read_verilog -sv {
 ~/ariane/tb/common/SimJTAG.sv}
 
 read_verilog -sv {
-~/ariane/fpga/src/ariane_peripherals_xilinx.sv 
-~/ariane/fpga/src/fan_ctrl.sv 
-~/ariane/fpga/src/ariane_xilinx.sv 
-~/ariane/fpga/src/bootrom/bootrom.sv 
-~/ariane/fpga/src/ariane-ethernet/ssio_ddr_in.sv 
-~/ariane/fpga/src/ariane-ethernet/eth_mac_1g_rgmii.sv 
-~/ariane/fpga/src/ariane-ethernet/axis_gmii_rx.sv 
-~/ariane/fpga/src/ariane-ethernet/oddr.sv 
-~/ariane/fpga/src/ariane-ethernet/axis_gmii_tx.sv 
-~/ariane/fpga/src/ariane-ethernet/dualmem_widen8.sv 
-~/ariane/fpga/src/ariane-ethernet/rgmii_phy_if.sv 
-~/ariane/fpga/src/ariane-ethernet/eth_mac_1g.sv 
-~/ariane/fpga/src/ariane-ethernet/dualmem_widen.sv 
-~/ariane/fpga/src/ariane-ethernet/rgmii_lfsr.sv 
-~/ariane/fpga/src/ariane-ethernet/rgmii_core.sv 
-~/ariane/fpga/src/ariane-ethernet/rgmii_soc.sv 
-~/ariane/fpga/src/ariane-ethernet/eth_mac_1g_rgmii_fifo.sv 
-~/ariane/fpga/src/ariane-ethernet/iddr.sv 
-~/ariane/fpga/src/ariane-ethernet/framing_top.sv
+		~/ariane/fpga/src/ariane_peripherals_xilinx.sv 
+		~/ariane/fpga/src/fan_ctrl.sv 
+		~/ariane/fpga/src/ariane_xilinx.sv 
+		~/ariane/fpga/src/bootrom/bootrom.sv 
+		~/ariane/fpga/src/ariane-ethernet/ssio_ddr_in.sv 
+		~/ariane/fpga/src/ariane-ethernet/eth_mac_1g_rgmii.sv 
+		~/ariane/fpga/src/ariane-ethernet/axis_gmii_rx.sv 
+		~/ariane/fpga/src/ariane-ethernet/oddr.sv 
+		~/ariane/fpga/src/ariane-ethernet/axis_gmii_tx.sv 
+		~/ariane/fpga/src/ariane-ethernet/dualmem_widen8.sv 
+		~/ariane/fpga/src/ariane-ethernet/rgmii_phy_if.sv 
+		~/ariane/fpga/src/ariane-ethernet/eth_mac_1g.sv 
+		~/ariane/fpga/src/ariane-ethernet/dualmem_widen.sv 
+		~/ariane/fpga/src/ariane-ethernet/rgmii_lfsr.sv 
+		~/ariane/fpga/src/ariane-ethernet/rgmii_core.sv 
+		~/ariane/fpga/src/ariane-ethernet/rgmii_soc.sv 
+		~/ariane/fpga/src/ariane-ethernet/eth_mac_1g_rgmii_fifo.sv 
+		~/ariane/fpga/src/ariane-ethernet/iddr.sv 
+		~/ariane/fpga/src/ariane-ethernet/framing_top.sv
 }
