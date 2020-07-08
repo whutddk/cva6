@@ -17,8 +17,8 @@ read_verilog -sv {
 
 		~/ariane/src/riscv-dbg/src/dm_pkg.sv
 		~/ariane/src/axi/src/axi_pkg.sv
-~/ariane/src/register_interface/src/reg_intf.sv
-~/ariane/src/register_interface/src/reg_intf_pkg.sv
+		~/ariane/src/register_interface/src/reg_intf.sv
+		~/ariane/src/register_interface/src/reg_intf_pkg.sv
 ~/ariane/src/fpu/src/fpnew_pkg.sv
 ~/ariane/src/fpu/src/fpu_div_sqrt_mvp/hdl/defs_div_sqrt_mvp.sv
 
@@ -171,7 +171,7 @@ read_verilog -sv {
 		~/ariane/src/riscv-dbg/src/dm_sba.sv 
 		~/ariane/src/riscv-dbg/src/dm_top.sv 
 		~/ariane/src/riscv-dbg/debug_rom/debug_rom.sv 
-~/ariane/src/register_interface/src/apb_to_reg.sv 
+		~/ariane/src/register_interface/src/apb_to_reg.sv 
 ~/ariane/src/axi/src/axi_multicut.sv 
 ~/ariane/src/common_cells/src/deprecated/generic_fifo.sv
 ~/ariane/src/common_cells/src/deprecated/pulp_sync.sv 
