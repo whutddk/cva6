@@ -14,19 +14,25 @@ read_vhdl {
 }
 
 read_verilog -sv {
-~/ariane/include/riscv_pkg.sv
-~/ariane/src/riscv-dbg/src/dm_pkg.sv
-~/ariane/include/ariane_pkg.sv
-~/ariane/include/std_cache_pkg.sv
-~/ariane/include/wt_cache_pkg.sv
+
+		~/ariane/src/riscv-dbg/src/dm_pkg.sv
 ~/ariane/src/axi/src/axi_pkg.sv
 ~/ariane/src/register_interface/src/reg_intf.sv
 ~/ariane/src/register_interface/src/reg_intf_pkg.sv
-~/ariane/include/axi_intf.sv
-~/ariane/tb/ariane_soc_pkg.sv
-~/ariane/include/ariane_axi_pkg.sv
 ~/ariane/src/fpu/src/fpnew_pkg.sv
 ~/ariane/src/fpu/src/fpu_div_sqrt_mvp/hdl/defs_div_sqrt_mvp.sv
+
+
+~/ariane/include/riscv_pkg.sv
+~/ariane/include/axi_intf.sv
+~/ariane/include/ariane_pkg.sv
+~/ariane/include/std_cache_pkg.sv
+~/ariane/include/wt_cache_pkg.sv
+~/ariane/include/ariane_axi_pkg.sv
+
+~/ariane/tb/ariane_soc_pkg.sv
+
+
 }
 
 read_verilog -sv {
@@ -157,14 +163,14 @@ read_verilog -sv {
 ~/ariane/src/rv_plic/rtl/rv_plic_gateway.sv 
 ~/ariane/src/rv_plic/rtl/plic_regmap.sv 
 ~/ariane/src/rv_plic/rtl/plic_top.sv 
-~/ariane/src/riscv-dbg/src/dmi_cdc.sv 
-~/ariane/src/riscv-dbg/src/dmi_jtag.sv 
-~/ariane/src/riscv-dbg/src/dmi_jtag_tap.sv 
-~/ariane/src/riscv-dbg/src/dm_csrs.sv 
-~/ariane/src/riscv-dbg/src/dm_mem.sv 
-~/ariane/src/riscv-dbg/src/dm_sba.sv 
-~/ariane/src/riscv-dbg/src/dm_top.sv 
-~/ariane/src/riscv-dbg/debug_rom/debug_rom.sv 
+		~/ariane/src/riscv-dbg/src/dmi_cdc.sv 
+		~/ariane/src/riscv-dbg/src/dmi_jtag.sv 
+		~/ariane/src/riscv-dbg/src/dmi_jtag_tap.sv 
+		~/ariane/src/riscv-dbg/src/dm_csrs.sv 
+		~/ariane/src/riscv-dbg/src/dm_mem.sv 
+		~/ariane/src/riscv-dbg/src/dm_sba.sv 
+		~/ariane/src/riscv-dbg/src/dm_top.sv 
+		~/ariane/src/riscv-dbg/debug_rom/debug_rom.sv 
 ~/ariane/src/register_interface/src/apb_to_reg.sv 
 ~/ariane/src/axi/src/axi_multicut.sv 
 ~/ariane/src/common_cells/src/deprecated/generic_fifo.sv
