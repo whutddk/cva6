@@ -95,28 +95,28 @@ read_verilog -sv {
 		~/ariane/src/fpu/src/fpu_div_sqrt_mvp/hdl/control_mvp.sv 
 		~/ariane/src/fpu/src/fpu_div_sqrt_mvp/hdl/norm_div_sqrt_mvp.sv 
 		~/ariane/src/fpu/src/fpu_div_sqrt_mvp/hdl/div_sqrt_mvp_wrapper.sv
-~/ariane/src/frontend/frontend.sv
-~/ariane/src/frontend/instr_scan.sv
-~/ariane/src/frontend/instr_queue.sv
-~/ariane/src/frontend/bht.sv
-~/ariane/src/frontend/btb.sv
-~/ariane/src/frontend/ras.sv
-~/ariane/src/cache_subsystem/wt_dcache.sv 
-~/ariane/src/cache_subsystem/tag_cmp.sv 
-~/ariane/src/cache_subsystem/wt_dcache_ctrl.sv
-~/ariane/src/cache_subsystem/amo_alu.sv
-~/ariane/src/cache_subsystem/wt_axi_adapter.sv
-~/ariane/src/cache_subsystem/std_nbdcache.sv
-~/ariane/src/cache_subsystem/cache_ctrl.sv
-~/ariane/src/cache_subsystem/miss_handler.sv
-~/ariane/src/cache_subsystem/std_cache_subsystem.sv
-~/ariane/src/cache_subsystem/wt_dcache_missunit.sv
-~/ariane/src/cache_subsystem/std_icache.sv
-~/ariane/src/cache_subsystem/wt_icache.sv
-~/ariane/src/cache_subsystem/wt_dcache_wbuffer.sv 
-~/ariane/src/cache_subsystem/wt_l15_adapter.sv 
-~/ariane/src/cache_subsystem/wt_dcache_mem.sv 
-~/ariane/src/cache_subsystem/wt_cache_subsystem.sv 
+		~/ariane/src/frontend/frontend.sv
+		~/ariane/src/frontend/instr_scan.sv
+		~/ariane/src/frontend/instr_queue.sv
+		~/ariane/src/frontend/bht.sv
+		~/ariane/src/frontend/btb.sv
+		~/ariane/src/frontend/ras.sv
+		~/ariane/src/cache_subsystem/wt_dcache.sv 
+		~/ariane/src/cache_subsystem/tag_cmp.sv 
+		~/ariane/src/cache_subsystem/wt_dcache_ctrl.sv
+		~/ariane/src/cache_subsystem/amo_alu.sv
+		~/ariane/src/cache_subsystem/wt_axi_adapter.sv
+		~/ariane/src/cache_subsystem/std_nbdcache.sv
+		~/ariane/src/cache_subsystem/cache_ctrl.sv
+		~/ariane/src/cache_subsystem/miss_handler.sv
+		~/ariane/src/cache_subsystem/std_cache_subsystem.sv
+		~/ariane/src/cache_subsystem/wt_dcache_missunit.sv
+		~/ariane/src/cache_subsystem/std_icache.sv
+		~/ariane/src/cache_subsystem/wt_icache.sv
+		~/ariane/src/cache_subsystem/wt_dcache_wbuffer.sv 
+		~/ariane/src/cache_subsystem/wt_l15_adapter.sv 
+		~/ariane/src/cache_subsystem/wt_dcache_mem.sv 
+		~/ariane/src/cache_subsystem/wt_cache_subsystem.sv 
 ~/ariane/src/clint/axi_lite_interface.sv 
 ~/ariane/src/clint/clint.sv 
 		~/ariane/fpga/src/axi2apb/src/axi2apb_wrap.sv 
