@@ -1,16 +1,16 @@
 read_vhdl {
-~/ariane/fpga/src/apb_uart/src/apb_uart.vhd
-~/ariane/fpga/src/apb_uart/src/uart_transmitter.vhd
-~/ariane/fpga/src/apb_uart/src/uart_interrupt.vhd
-~/ariane/fpga/src/apb_uart/src/slib_mv_filter.vhd
-~/ariane/fpga/src/apb_uart/src/slib_input_filter.vhd
-~/ariane/fpga/src/apb_uart/src/slib_counter.vhd
-~/ariane/fpga/src/apb_uart/src/uart_receiver.vhd
-~/ariane/fpga/src/apb_uart/src/slib_edge_detect.vhd
-~/ariane/fpga/src/apb_uart/src/slib_input_sync.vhd
-~/ariane/fpga/src/apb_uart/src/slib_clock_div.vhd
-~/ariane/fpga/src/apb_uart/src/slib_fifo.vhd
-~/ariane/fpga/src/apb_uart/src/uart_baudgen.vhd
+		~/ariane/fpga/src/apb_uart/src/apb_uart.vhd
+		~/ariane/fpga/src/apb_uart/src/uart_transmitter.vhd
+		~/ariane/fpga/src/apb_uart/src/uart_interrupt.vhd
+		~/ariane/fpga/src/apb_uart/src/slib_mv_filter.vhd
+		~/ariane/fpga/src/apb_uart/src/slib_input_filter.vhd
+		~/ariane/fpga/src/apb_uart/src/slib_counter.vhd
+		~/ariane/fpga/src/apb_uart/src/uart_receiver.vhd
+		~/ariane/fpga/src/apb_uart/src/slib_edge_detect.vhd
+		~/ariane/fpga/src/apb_uart/src/slib_input_sync.vhd
+		~/ariane/fpga/src/apb_uart/src/slib_clock_div.vhd
+		~/ariane/fpga/src/apb_uart/src/slib_fifo.vhd
+		~/ariane/fpga/src/apb_uart/src/uart_baudgen.vhd
 }
 
 read_verilog -sv {
@@ -84,7 +84,11 @@ read_verilog -sv {
 ~/ariane/src/fpu/src/fpnew_rounding.sv
 ~/ariane/src/fpu/src/fpu_div_sqrt_mvp/hdl/iteration_div_sqrt_mvp.sv
 ~/ariane/src/fpu/src/fpu_div_sqrt_mvp/hdl/nrbd_nrsc_mvp.sv
-~/ariane/src/fpu/src/fpu_div_sqrt_mvp/hdl/div_sqrt_top_mvp.sv /home/ddk/PCL0/openpiton/piton/design/chip/tile/ariane/src/fpu/src/fpu_div_sqrt_mvp/hdl/preprocess_mvp.sv /home/ddk/PCL0/openpiton/piton/design/chip/tile/ariane/src/fpu/src/fpu_div_sqrt_mvp/hdl/control_mvp.sv /home/ddk/PCL0/openpiton/piton/design/chip/tile/ariane/src/fpu/src/fpu_div_sqrt_mvp/hdl/norm_div_sqrt_mvp.sv /home/ddk/PCL0/openpiton/piton/design/chip/tile/ariane/src/fpu/src/fpu_div_sqrt_mvp/hdl/div_sqrt_mvp_wrapper.sv
+~/ariane/src/fpu/src/fpu_div_sqrt_mvp/hdl/div_sqrt_top_mvp.sv 
+/home/ddk/PCL0/openpiton/piton/design/chip/tile/ariane/src/fpu/src/fpu_div_sqrt_mvp/hdl/preprocess_mvp.sv 
+/home/ddk/PCL0/openpiton/piton/design/chip/tile/ariane/src/fpu/src/fpu_div_sqrt_mvp/hdl/control_mvp.sv 
+/home/ddk/PCL0/openpiton/piton/design/chip/tile/ariane/src/fpu/src/fpu_div_sqrt_mvp/hdl/norm_div_sqrt_mvp.sv 
+/home/ddk/PCL0/openpiton/piton/design/chip/tile/ariane/src/fpu/src/fpu_div_sqrt_mvp/hdl/div_sqrt_mvp_wrapper.sv
 ~/ariane/src/frontend/frontend.sv
 ~/ariane/src/frontend/instr_scan.sv
 ~/ariane/src/frontend/instr_queue.sv
