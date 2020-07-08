@@ -38,45 +38,45 @@ read_verilog -sv {
 read_verilog -sv {
 		~/ariane/src/tech_cells_generic/src/cluster_clock_gating.sv
 		~/ariane/tb/common/mock_uart.sv
-~/ariane/src/util/sram.sv
+		~/ariane/src/util/sram.sv
 }
 
 
 
 
 read_verilog -sv {
-~/ariane/src/serdiv.sv
-~/ariane/src/ariane_regfile_ff.sv
-~/ariane/src/amo_buffer.sv
-~/ariane/src/ptw.sv
-~/ariane/src/branch_unit.sv
-~/ariane/src/mmu.sv
-~/ariane/src/controller.sv
-~/ariane/src/issue_stage.sv
-~/ariane/src/re_name.sv
-~/ariane/src/csr_buffer.sv
-~/ariane/src/tlb.sv
-~/ariane/src/decoder.sv
-~/ariane/src/scoreboard.sv
-~/ariane/src/perf_counters.sv
-~/ariane/src/store_unit.sv
-~/ariane/src/ariane.sv
-~/ariane/src/axi_adapter.sv
-~/ariane/src/fpu_wrap.sv
-~/ariane/src/csr_regfile.sv
-~/ariane/src/load_store_unit.sv
-~/ariane/src/commit_stage.sv
-~/ariane/src/multiplier.sv
-~/ariane/src/store_buffer.sv
-~/ariane/src/compressed_decoder.sv
-~/ariane/src/axi_shim.sv
-~/ariane/src/alu.sv
-~/ariane/src/instr_realign.sv
-~/ariane/src/ex_stage.sv
-~/ariane/src/id_stage.sv
-~/ariane/src/mult.sv
-~/ariane/src/load_unit.sv
-~/ariane/src/issue_read_operands.sv
+		~/ariane/src/serdiv.sv
+		~/ariane/src/ariane_regfile_ff.sv
+		~/ariane/src/amo_buffer.sv
+		~/ariane/src/ptw.sv
+		~/ariane/src/branch_unit.sv
+		~/ariane/src/mmu.sv
+		~/ariane/src/controller.sv
+		~/ariane/src/issue_stage.sv
+		~/ariane/src/re_name.sv
+		~/ariane/src/csr_buffer.sv
+		~/ariane/src/tlb.sv
+		~/ariane/src/decoder.sv
+		~/ariane/src/scoreboard.sv
+		~/ariane/src/perf_counters.sv
+		~/ariane/src/store_unit.sv
+		~/ariane/src/ariane.sv
+		~/ariane/src/axi_adapter.sv
+		~/ariane/src/fpu_wrap.sv
+		~/ariane/src/csr_regfile.sv
+		~/ariane/src/load_store_unit.sv
+		~/ariane/src/commit_stage.sv
+		~/ariane/src/multiplier.sv
+		~/ariane/src/store_buffer.sv
+		~/ariane/src/compressed_decoder.sv
+		~/ariane/src/axi_shim.sv
+		~/ariane/src/alu.sv
+		~/ariane/src/instr_realign.sv
+		~/ariane/src/ex_stage.sv
+		~/ariane/src/id_stage.sv
+		~/ariane/src/mult.sv
+		~/ariane/src/load_unit.sv
+		~/ariane/src/issue_read_operands.sv
 		~/ariane/src/fpu/src/fpnew_fma.sv
 		~/ariane/src/fpu/src/fpnew_opgroup_fmt_slice.sv
 		~/ariane/src/fpu/src/fpnew_divsqrt_multi.sv
@@ -181,10 +181,10 @@ read_verilog -sv {
 ~/ariane/src/common_cells/src/stream_mux.sv 
 ~/ariane/src/common_cells/src/stream_demux.sv 
 ~/ariane/src/common_cells/src/exp_backoff.sv 
-~/ariane/src/util/axi_master_connect.sv 
-~/ariane/src/util/axi_slave_connect.sv 
-~/ariane/src/util/axi_master_connect_rev.sv 
-~/ariane/src/util/axi_slave_connect_rev.sv
+		~/ariane/src/util/axi_master_connect.sv 
+		~/ariane/src/util/axi_slave_connect.sv 
+		~/ariane/src/util/axi_master_connect_rev.sv 
+		~/ariane/src/util/axi_slave_connect_rev.sv
 		~/ariane/src/axi/src/axi_cut.sv 
 		~/ariane/src/axi/src/axi_join.sv 
 		~/ariane/src/axi/src/axi_delayer.sv 
