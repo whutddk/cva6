@@ -117,8 +117,8 @@ read_verilog -sv {
 		~/ariane/src/cache_subsystem/wt_l15_adapter.sv 
 		~/ariane/src/cache_subsystem/wt_dcache_mem.sv 
 		~/ariane/src/cache_subsystem/wt_cache_subsystem.sv 
-~/ariane/src/clint/axi_lite_interface.sv 
-~/ariane/src/clint/clint.sv 
+		~/ariane/src/clint/axi_lite_interface.sv 
+		~/ariane/src/clint/clint.sv 
 		~/ariane/fpga/src/axi2apb/src/axi2apb_wrap.sv 
 		~/ariane/fpga/src/axi2apb/src/axi2apb.sv 
 		~/ariane/fpga/src/axi2apb/src/axi2apb_64_32.sv 
@@ -132,25 +132,25 @@ read_verilog -sv {
 		~/ariane/fpga/src/axi_slice/src/axi_ar_buffer.sv 
 		~/ariane/fpga/src/axi_slice/src/axi_b_buffer.sv
 		~/ariane/fpga/src/axi_slice/src/axi_aw_buffer.sv 
-~/ariane/src/axi_node/src/axi_regs_top.sv 
-~/ariane/src/axi_node/src/axi_BR_allocator.sv 
-~/ariane/src/axi_node/src/axi_BW_allocator.sv 
-~/ariane/src/axi_node/src/axi_address_decoder_BR.sv 
-~/ariane/src/axi_node/src/axi_DW_allocator.sv 
-~/ariane/src/axi_node/src/axi_address_decoder_BW.sv 
-~/ariane/src/axi_node/src/axi_address_decoder_DW.sv 
-~/ariane/src/axi_node/src/axi_node_arbiter.sv 
-~/ariane/src/axi_node/src/axi_response_block.sv 
-~/ariane/src/axi_node/src/axi_request_block.sv 
-~/ariane/src/axi_node/src/axi_AR_allocator.sv 
-~/ariane/src/axi_node/src/axi_AW_allocator.sv 
-~/ariane/src/axi_node/src/axi_address_decoder_AR.sv 
-~/ariane/src/axi_node/src/axi_address_decoder_AW.sv 
-~/ariane/src/axi_node/src/apb_regs_top.sv
-~/ariane/src/axi_node/src/axi_node_intf_wrap.sv 
-~/ariane/src/axi_node/src/axi_node.sv 
-~/ariane/src/axi_node/src/axi_node_wrap_with_slices.sv 
-~/ariane/src/axi_node/src/axi_multiplexer.sv 
+		~/ariane/src/axi_node/src/axi_regs_top.sv 
+		~/ariane/src/axi_node/src/axi_BR_allocator.sv 
+		~/ariane/src/axi_node/src/axi_BW_allocator.sv 
+		~/ariane/src/axi_node/src/axi_address_decoder_BR.sv 
+		~/ariane/src/axi_node/src/axi_DW_allocator.sv 
+		~/ariane/src/axi_node/src/axi_address_decoder_BW.sv 
+		~/ariane/src/axi_node/src/axi_address_decoder_DW.sv 
+		~/ariane/src/axi_node/src/axi_node_arbiter.sv 
+		~/ariane/src/axi_node/src/axi_response_block.sv 
+		~/ariane/src/axi_node/src/axi_request_block.sv 
+		~/ariane/src/axi_node/src/axi_AR_allocator.sv 
+		~/ariane/src/axi_node/src/axi_AW_allocator.sv 
+		~/ariane/src/axi_node/src/axi_address_decoder_AR.sv 
+		~/ariane/src/axi_node/src/axi_address_decoder_AW.sv 
+		~/ariane/src/axi_node/src/apb_regs_top.sv
+		~/ariane/src/axi_node/src/axi_node_intf_wrap.sv 
+		~/ariane/src/axi_node/src/axi_node.sv 
+		~/ariane/src/axi_node/src/axi_node_wrap_with_slices.sv 
+		~/ariane/src/axi_node/src/axi_multiplexer.sv 
 ~/ariane/src/axi_riscv_atomics/src/axi_riscv_amos.sv 
 ~/ariane/src/axi_riscv_atomics/src/axi_riscv_atomics.sv 
 ~/ariane/src/axi_riscv_atomics/src/axi_res_tbl.sv 
