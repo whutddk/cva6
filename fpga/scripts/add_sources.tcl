@@ -151,13 +151,13 @@ read_verilog -sv {
 		~/ariane/src/axi_node/src/axi_node.sv 
 		~/ariane/src/axi_node/src/axi_node_wrap_with_slices.sv 
 		~/ariane/src/axi_node/src/axi_multiplexer.sv 
-~/ariane/src/axi_riscv_atomics/src/axi_riscv_amos.sv 
-~/ariane/src/axi_riscv_atomics/src/axi_riscv_atomics.sv 
-~/ariane/src/axi_riscv_atomics/src/axi_res_tbl.sv 
-~/ariane/src/axi_riscv_atomics/src/axi_riscv_lrsc_wrap.sv 
-~/ariane/src/axi_riscv_atomics/src/axi_riscv_amos_alu.sv 
-~/ariane/src/axi_riscv_atomics/src/axi_riscv_lrsc.sv
-~/ariane/src/axi_riscv_atomics/src/axi_riscv_atomics_wrap.sv 
+		~/ariane/src/axi_riscv_atomics/src/axi_riscv_amos.sv 
+		~/ariane/src/axi_riscv_atomics/src/axi_riscv_atomics.sv 
+		~/ariane/src/axi_riscv_atomics/src/axi_res_tbl.sv 
+		~/ariane/src/axi_riscv_atomics/src/axi_riscv_lrsc_wrap.sv 
+		~/ariane/src/axi_riscv_atomics/src/axi_riscv_amos_alu.sv 
+		~/ariane/src/axi_riscv_atomics/src/axi_riscv_lrsc.sv
+		~/ariane/src/axi_riscv_atomics/src/axi_riscv_atomics_wrap.sv 
 ~/ariane/src/axi_mem_if/src/axi2mem.sv 
 ~/ariane/src/rv_plic/rtl/rv_plic_target.sv 
 ~/ariane/src/rv_plic/rtl/rv_plic_gateway.sv 
