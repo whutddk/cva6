@@ -16,7 +16,7 @@ read_vhdl {
 read_verilog -sv {
 
 		~/ariane/src/riscv-dbg/src/dm_pkg.sv
-~/ariane/src/axi/src/axi_pkg.sv
+		~/ariane/src/axi/src/axi_pkg.sv
 ~/ariane/src/register_interface/src/reg_intf.sv
 ~/ariane/src/register_interface/src/reg_intf_pkg.sv
 ~/ariane/src/fpu/src/fpnew_pkg.sv
@@ -185,10 +185,10 @@ read_verilog -sv {
 ~/ariane/src/util/axi_slave_connect.sv 
 ~/ariane/src/util/axi_master_connect_rev.sv 
 ~/ariane/src/util/axi_slave_connect_rev.sv
-~/ariane/src/axi/src/axi_cut.sv 
-~/ariane/src/axi/src/axi_join.sv 
-~/ariane/src/axi/src/axi_delayer.sv 
-~/ariane/src/axi/src/axi_to_axi_lite.sv 
+		~/ariane/src/axi/src/axi_cut.sv 
+		~/ariane/src/axi/src/axi_join.sv 
+		~/ariane/src/axi/src/axi_delayer.sv 
+		~/ariane/src/axi/src/axi_to_axi_lite.sv 
 ~/ariane/src/fpga-support/rtl/SyncSpRamBeNx64.sv 
 ~/ariane/src/common_cells/src/unread.sv 
 ~/ariane/src/common_cells/src/sync.sv 
