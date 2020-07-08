@@ -158,11 +158,11 @@ read_verilog -sv {
 		~/ariane/src/axi_riscv_atomics/src/axi_riscv_amos_alu.sv 
 		~/ariane/src/axi_riscv_atomics/src/axi_riscv_lrsc.sv
 		~/ariane/src/axi_riscv_atomics/src/axi_riscv_atomics_wrap.sv 
-~/ariane/src/axi_mem_if/src/axi2mem.sv 
-~/ariane/src/rv_plic/rtl/rv_plic_target.sv 
-~/ariane/src/rv_plic/rtl/rv_plic_gateway.sv 
-~/ariane/src/rv_plic/rtl/plic_regmap.sv 
-~/ariane/src/rv_plic/rtl/plic_top.sv 
+		~/ariane/src/axi_mem_if/src/axi2mem.sv 
+		~/ariane/src/rv_plic/rtl/rv_plic_target.sv 
+		~/ariane/src/rv_plic/rtl/rv_plic_gateway.sv 
+		~/ariane/src/rv_plic/rtl/plic_regmap.sv 
+		~/ariane/src/rv_plic/rtl/plic_top.sv 
 		~/ariane/src/riscv-dbg/src/dmi_cdc.sv 
 		~/ariane/src/riscv-dbg/src/dmi_jtag.sv 
 		~/ariane/src/riscv-dbg/src/dmi_jtag_tap.sv 
@@ -172,15 +172,15 @@ read_verilog -sv {
 		~/ariane/src/riscv-dbg/src/dm_top.sv 
 		~/ariane/src/riscv-dbg/debug_rom/debug_rom.sv 
 		~/ariane/src/register_interface/src/apb_to_reg.sv 
-~/ariane/src/axi/src/axi_multicut.sv 
-~/ariane/src/common_cells/src/deprecated/generic_fifo.sv
-~/ariane/src/common_cells/src/deprecated/pulp_sync.sv 
-~/ariane/src/common_cells/src/deprecated/find_first_one.sv 
-~/ariane/src/common_cells/src/rstgen_bypass.sv 
-~/ariane/src/common_cells/src/rstgen.sv 
-~/ariane/src/common_cells/src/stream_mux.sv 
-~/ariane/src/common_cells/src/stream_demux.sv 
-~/ariane/src/common_cells/src/exp_backoff.sv 
+		~/ariane/src/axi/src/axi_multicut.sv 
+		~/ariane/src/common_cells/src/deprecated/generic_fifo.sv
+		~/ariane/src/common_cells/src/deprecated/pulp_sync.sv 
+		~/ariane/src/common_cells/src/deprecated/find_first_one.sv 
+		~/ariane/src/common_cells/src/rstgen_bypass.sv 
+		~/ariane/src/common_cells/src/rstgen.sv 
+		~/ariane/src/common_cells/src/stream_mux.sv 
+		~/ariane/src/common_cells/src/stream_demux.sv 
+		~/ariane/src/common_cells/src/exp_backoff.sv 
 		~/ariane/src/util/axi_master_connect.sv 
 		~/ariane/src/util/axi_slave_connect.sv 
 		~/ariane/src/util/axi_master_connect_rev.sv 
@@ -189,27 +189,27 @@ read_verilog -sv {
 		~/ariane/src/axi/src/axi_join.sv 
 		~/ariane/src/axi/src/axi_delayer.sv 
 		~/ariane/src/axi/src/axi_to_axi_lite.sv 
-~/ariane/src/fpga-support/rtl/SyncSpRamBeNx64.sv 
-~/ariane/src/common_cells/src/unread.sv 
-~/ariane/src/common_cells/src/sync.sv 
-~/ariane/src/common_cells/src/cdc_2phase.sv 
-~/ariane/src/common_cells/src/spill_register.sv 
-~/ariane/src/common_cells/src/sync_wedge.sv 
-~/ariane/src/common_cells/src/edge_detect.sv 
-~/ariane/src/common_cells/src/stream_arbiter.sv 
-~/ariane/src/common_cells/src/stream_arbiter_flushable.sv 
-~/ariane/src/common_cells/src/deprecated/fifo_v1.sv 
-~/ariane/src/common_cells/src/deprecated/fifo_v2.sv 
-~/ariane/src/common_cells/src/fifo_v3.sv 
-~/ariane/src/common_cells/src/lzc.sv 
-~/ariane/src/common_cells/src/popcount.sv 
-~/ariane/src/common_cells/src/rr_arb_tree.sv 
-~/ariane/src/common_cells/src/deprecated/rrarbiter.sv 
-~/ariane/src/common_cells/src/stream_delay.sv 
-~/ariane/src/common_cells/src/lfsr_8bit.sv 
-~/ariane/src/common_cells/src/lfsr_16bit.sv 
-~/ariane/src/common_cells/src/counter.sv 
-~/ariane/src/common_cells/src/shift_reg.sv 
+		~/ariane/src/fpga-support/rtl/SyncSpRamBeNx64.sv 
+		~/ariane/src/common_cells/src/unread.sv 
+		~/ariane/src/common_cells/src/sync.sv 
+		~/ariane/src/common_cells/src/cdc_2phase.sv 
+		~/ariane/src/common_cells/src/spill_register.sv 
+		~/ariane/src/common_cells/src/sync_wedge.sv 
+		~/ariane/src/common_cells/src/edge_detect.sv 
+		~/ariane/src/common_cells/src/stream_arbiter.sv 
+		~/ariane/src/common_cells/src/stream_arbiter_flushable.sv 
+		~/ariane/src/common_cells/src/deprecated/fifo_v1.sv 
+		~/ariane/src/common_cells/src/deprecated/fifo_v2.sv 
+		~/ariane/src/common_cells/src/fifo_v3.sv 
+		~/ariane/src/common_cells/src/lzc.sv 
+		~/ariane/src/common_cells/src/popcount.sv 
+		~/ariane/src/common_cells/src/rr_arb_tree.sv 
+		~/ariane/src/common_cells/src/deprecated/rrarbiter.sv 
+		~/ariane/src/common_cells/src/stream_delay.sv 
+		~/ariane/src/common_cells/src/lfsr_8bit.sv 
+		~/ariane/src/common_cells/src/lfsr_16bit.sv 
+		~/ariane/src/common_cells/src/counter.sv 
+		~/ariane/src/common_cells/src/shift_reg.sv 
 		~/ariane/src/tech_cells_generic/src/pulp_clock_gating.sv 
 		~/ariane/src/tech_cells_generic/src/cluster_clock_inverter.sv 
 		~/ariane/src/tech_cells_generic/src/pulp_clock_mux2.sv 
