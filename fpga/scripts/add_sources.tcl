@@ -19,8 +19,8 @@ read_verilog -sv {
 		~/ariane/src/axi/src/axi_pkg.sv
 		~/ariane/src/register_interface/src/reg_intf.sv
 		~/ariane/src/register_interface/src/reg_intf_pkg.sv
-~/ariane/src/fpu/src/fpnew_pkg.sv
-~/ariane/src/fpu/src/fpu_div_sqrt_mvp/hdl/defs_div_sqrt_mvp.sv
+		~/ariane/src/fpu/src/fpnew_pkg.sv
+		~/ariane/src/fpu/src/fpu_div_sqrt_mvp/hdl/defs_div_sqrt_mvp.sv
 
 
 ~/ariane/include/riscv_pkg.sv
@@ -77,24 +77,24 @@ read_verilog -sv {
 ~/ariane/src/mult.sv
 ~/ariane/src/load_unit.sv
 ~/ariane/src/issue_read_operands.sv
-~/ariane/src/fpu/src/fpnew_fma.sv
-~/ariane/src/fpu/src/fpnew_opgroup_fmt_slice.sv
-~/ariane/src/fpu/src/fpnew_divsqrt_multi.sv
-~/ariane/src/fpu/src/fpnew_fma_multi.sv
-~/ariane/src/fpu/src/fpnew_opgroup_multifmt_slice.sv
-~/ariane/src/fpu/src/fpnew_classifier.sv
-~/ariane/src/fpu/src/fpnew_top.sv
-~/ariane/src/fpu/src/fpnew_noncomp.sv
-~/ariane/src/fpu/src/fpnew_cast_multi.sv
-~/ariane/src/fpu/src/fpnew_opgroup_block.sv
-~/ariane/src/fpu/src/fpnew_rounding.sv
-~/ariane/src/fpu/src/fpu_div_sqrt_mvp/hdl/iteration_div_sqrt_mvp.sv
-~/ariane/src/fpu/src/fpu_div_sqrt_mvp/hdl/nrbd_nrsc_mvp.sv
-~/ariane/src/fpu/src/fpu_div_sqrt_mvp/hdl/div_sqrt_top_mvp.sv 
-/home/ddk/PCL0/openpiton/piton/design/chip/tile/ariane/src/fpu/src/fpu_div_sqrt_mvp/hdl/preprocess_mvp.sv 
-/home/ddk/PCL0/openpiton/piton/design/chip/tile/ariane/src/fpu/src/fpu_div_sqrt_mvp/hdl/control_mvp.sv 
-/home/ddk/PCL0/openpiton/piton/design/chip/tile/ariane/src/fpu/src/fpu_div_sqrt_mvp/hdl/norm_div_sqrt_mvp.sv 
-/home/ddk/PCL0/openpiton/piton/design/chip/tile/ariane/src/fpu/src/fpu_div_sqrt_mvp/hdl/div_sqrt_mvp_wrapper.sv
+		~/ariane/src/fpu/src/fpnew_fma.sv
+		~/ariane/src/fpu/src/fpnew_opgroup_fmt_slice.sv
+		~/ariane/src/fpu/src/fpnew_divsqrt_multi.sv
+		~/ariane/src/fpu/src/fpnew_fma_multi.sv
+		~/ariane/src/fpu/src/fpnew_opgroup_multifmt_slice.sv
+		~/ariane/src/fpu/src/fpnew_classifier.sv
+		~/ariane/src/fpu/src/fpnew_top.sv
+		~/ariane/src/fpu/src/fpnew_noncomp.sv
+		~/ariane/src/fpu/src/fpnew_cast_multi.sv
+		~/ariane/src/fpu/src/fpnew_opgroup_block.sv
+		~/ariane/src/fpu/src/fpnew_rounding.sv
+		~/ariane/src/fpu/src/fpu_div_sqrt_mvp/hdl/iteration_div_sqrt_mvp.sv
+		~/ariane/src/fpu/src/fpu_div_sqrt_mvp/hdl/nrbd_nrsc_mvp.sv
+		~/ariane/src/fpu/src/fpu_div_sqrt_mvp/hdl/div_sqrt_top_mvp.sv 
+		~/ariane/src/fpu/src/fpu_div_sqrt_mvp/hdl/preprocess_mvp.sv 
+		~/ariane/src/fpu/src/fpu_div_sqrt_mvp/hdl/control_mvp.sv 
+		~/ariane/src/fpu/src/fpu_div_sqrt_mvp/hdl/norm_div_sqrt_mvp.sv 
+		~/ariane/src/fpu/src/fpu_div_sqrt_mvp/hdl/div_sqrt_mvp_wrapper.sv
 ~/ariane/src/frontend/frontend.sv
 ~/ariane/src/frontend/instr_scan.sv
 ~/ariane/src/frontend/instr_queue.sv
