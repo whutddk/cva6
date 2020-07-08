@@ -10,9 +10,6 @@
 [submodule "src/common_cells"]
 	path = src/common_cells
 	url = https://github.com/pulp-platform/common_cells.git
-[submodule "src/tech_cells_generic"]
-	path = src/tech_cells_generic
-	url = https://github.com/pulp-platform/tech_cells_generic.git
 [submodule "src/axi_riscv_atomics"]
 	path = src/axi_riscv_atomics
 	url = https://github.com/pulp-platform/axi_riscv_atomics.git

@@ -36,7 +36,7 @@ read_verilog -sv {
 }
 
 read_verilog -sv {
-~/ariane/src/tech_cells_generic/src/cluster_clock_gating.sv
+		~/ariane/src/tech_cells_generic/src/cluster_clock_gating.sv
 		~/ariane/tb/common/mock_uart.sv
 ~/ariane/src/util/sram.sv
 }
@@ -210,9 +210,9 @@ read_verilog -sv {
 ~/ariane/src/common_cells/src/lfsr_16bit.sv 
 ~/ariane/src/common_cells/src/counter.sv 
 ~/ariane/src/common_cells/src/shift_reg.sv 
-~/ariane/src/tech_cells_generic/src/pulp_clock_gating.sv 
-~/ariane/src/tech_cells_generic/src/cluster_clock_inverter.sv 
-~/ariane/src/tech_cells_generic/src/pulp_clock_mux2.sv 
+		~/ariane/src/tech_cells_generic/src/pulp_clock_gating.sv 
+		~/ariane/src/tech_cells_generic/src/cluster_clock_inverter.sv 
+		~/ariane/src/tech_cells_generic/src/pulp_clock_mux2.sv 
 		~/ariane/tb/ariane_testharness.sv 
 		~/ariane/tb/ariane_peripherals.sv 
 		~/ariane/tb/common/uart.sv 
