@@ -23,21 +23,21 @@ read_verilog -sv {
 		~/ariane/src/fpu/src/fpu_div_sqrt_mvp/hdl/defs_div_sqrt_mvp.sv
 
 
-~/ariane/include/riscv_pkg.sv
-~/ariane/include/axi_intf.sv
-~/ariane/include/ariane_pkg.sv
-~/ariane/include/std_cache_pkg.sv
-~/ariane/include/wt_cache_pkg.sv
-~/ariane/include/ariane_axi_pkg.sv
+		~/ariane/include/riscv_pkg.sv
+		~/ariane/include/axi_intf.sv
+		~/ariane/include/ariane_pkg.sv
+		~/ariane/include/std_cache_pkg.sv
+		~/ariane/include/wt_cache_pkg.sv
+		~/ariane/include/ariane_axi_pkg.sv
 
-~/ariane/tb/ariane_soc_pkg.sv
+		~/ariane/tb/ariane_soc_pkg.sv
 
 
 }
 
 read_verilog -sv {
 ~/ariane/src/tech_cells_generic/src/cluster_clock_gating.sv
-~/ariane/tb/common/mock_uart.sv
+		~/ariane/tb/common/mock_uart.sv
 ~/ariane/src/util/sram.sv
 }
 
@@ -213,11 +213,12 @@ read_verilog -sv {
 ~/ariane/src/tech_cells_generic/src/pulp_clock_gating.sv 
 ~/ariane/src/tech_cells_generic/src/cluster_clock_inverter.sv 
 ~/ariane/src/tech_cells_generic/src/pulp_clock_mux2.sv 
-~/ariane/tb/ariane_testharness.sv 
-~/ariane/tb/ariane_peripherals.sv 
-~/ariane/tb/common/uart.sv 
-~/ariane/tb/common/SimDTM.sv 
-~/ariane/tb/common/SimJTAG.sv}
+		~/ariane/tb/ariane_testharness.sv 
+		~/ariane/tb/ariane_peripherals.sv 
+		~/ariane/tb/common/uart.sv 
+		~/ariane/tb/common/SimDTM.sv 
+		~/ariane/tb/common/SimJTAG.sv
+}
 
 read_verilog -sv {
 		~/ariane/fpga/src/ariane_peripherals_xilinx.sv 
