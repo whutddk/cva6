@@ -1,7 +1,7 @@
 
 
 
-import ariane_pkg::*;
+
 
 module ariane_interface (
 	input  logic                         clk_i,
@@ -116,7 +116,7 @@ module ariane_interface (
         // logic [5:0]   axi_req_o_aw_atop;
 
         // logic axi_req_o_aw_valid;
-        assign M_AXI_AWVALID = axi_req_o.aw.valid;
+        assign M_AXI_AWVALID = axi_req_o.aw_valid;
 
         // w_chan_t  axi_req_o_w;
         // logic [63:0] axi_req_o_w_data;
@@ -129,10 +129,10 @@ module ariane_interface (
         assign M_AXI_WLAST = axi_req_o.w.last;
 
         // logic axi_req_o_w_valid;
-        assign M_AXI_WVALID = axi_req_o.w.valid;
+        assign M_AXI_WVALID = axi_req_o.w_valid;
 
         // logic axi_req_o_b_ready;
-        assign M_AXI_BREADY = axi_req_o.b.ready;
+        assign M_AXI_BREADY = axi_req_o.b_ready;
         // ar_chan_t axi_req_o_ar;
         // logic [3:0]             axi_req_o_ar_id;
         assign M_AXI_ARID = axi_req_o.ar.id;
@@ -164,10 +164,10 @@ module ariane_interface (
         // logic [3:0] axi_req_o_ar_region;
 
         // logic     axi_req_o_ar_valid;
-        assign M_AXI_ARVALID = axi_req_o.ar.valid;
+        assign M_AXI_ARVALID = axi_req_o.ar_valid;
 
         // logic     axi_req_o_r_ready;
-        assign M_AXI_RREADY = axi_req_o.r.ready;
+        assign M_AXI_RREADY = axi_req_o.r_ready;
 
 
 
@@ -176,15 +176,15 @@ module ariane_interface (
 
 
 		ariane_axi::resp_t            axi_resp_i;
-			  assign axi_resp_i.aw.ready = M_AXI_AWREADY;
-        assign axi_resp_i.ar.ready = M_AXI_ARREADY;
-        assign axi_resp_i.w.ready = M_AXI_WREADY;
-        assign axi_resp_i.b.valid = M_AXI_RVALID;
+	    assign axi_resp_i.aw_ready = M_AXI_AWREADY;
+        assign axi_resp_i.ar_ready = M_AXI_ARREADY;
+        assign axi_resp_i.w_ready = M_AXI_WREADY;
+        assign axi_resp_i.b_valid = M_AXI_RVALID;
         // b_chan_t  axi_resp_i_b;
         assign axi_resp_i.b.id = M_AXI_BID;
         assign axi_resp_i.b.resp = M_AXI_BRESP;
 
-        assign axi_resp_i.r.valid = M_AXI_BVALID;
+        assign axi_resp_i.r_valid = M_AXI_BVALID;
         // r_chan_t  axi_resp_i_r;
         assign axi_resp_i.r.id = M_AXI_RID;
         assign axi_resp_i.r.data = M_AXI_RDATA;
@@ -194,9 +194,8 @@ module ariane_interface (
 
 
 
-ariane i_ariane #(
-	.ArianeCfg(ariane_pkg::ArianeDefaultConfig)
-) (
+ariane   i_ariane  
+(
 	.clk_i(clk_i),
 	.rst_ni(rst_ni),
 	// Core ID, Cluster ID and boot address are considered more or less static
