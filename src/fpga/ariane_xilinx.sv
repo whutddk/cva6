@@ -74,7 +74,7 @@ logic test_en;
 logic ndmreset;
 logic ndmreset_n;
 logic debug_req_irq;
-logic time_irq;
+logic timer_irq;
 logic ipi;
 
 logic sys_clk;
@@ -655,7 +655,7 @@ xilinx_ariane_wrapper i_xilinx_ariane_wrapper
     .S_AXI_HP0_wlast(dram.w_last),
     .S_AXI_HP0_wready(dram.w_ready),
     .S_AXI_HP0_wstrb(dram.w_strb),
-    .S_AXI_HP0_wvalid(dram.w_valid),
+    .S_AXI_HP0_wvalid(dram.w_valid)
 
 
   );

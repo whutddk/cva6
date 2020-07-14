@@ -194,8 +194,9 @@ module ariane_interface (
 
 
 
-ariane   i_ariane  
-(
+ariane #(
+    .ArianeCfg ( ariane_soc::ArianeSocCfg )
+) i_ariane (
 	.clk_i(clk_i),
 	.rst_ni(rst_ni),
 	// Core ID, Cluster ID and boot address are considered more or less static
