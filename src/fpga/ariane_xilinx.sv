@@ -13,53 +13,38 @@
 
 module ariane_xilinx (
 
-    input logic sys_clk,
-    input logic rtc_clk,
 
-  // input  logic         sys_clk_p   ,
-  // input  logic         sys_clk_n   ,
-  input  logic         cpu_resetn  ,
-  // inout  wire  [31:0]  ddr3_dq     ,
-  // inout  wire  [ 3:0]  ddr3_dqs_n  ,
-  // inout  wire  [ 3:0]  ddr3_dqs_p  ,
-  // output logic [14:0]  ddr3_addr   ,
-  // output logic [ 2:0]  ddr3_ba     ,
-  // output logic         ddr3_ras_n  ,
-  // output logic         ddr3_cas_n  ,
-  // output logic         ddr3_we_n   ,
-  // output logic         ddr3_reset_n,
-  // output logic [ 0:0]  ddr3_ck_p   ,
-  // output logic [ 0:0]  ddr3_ck_n   ,
-  // output logic [ 0:0]  ddr3_cke    ,
-  // output logic [ 0:0]  ddr3_cs_n   ,
-  // output logic [ 3:0]  ddr3_dm     ,
-  // output logic [ 0:0]  ddr3_odt    ,
+  inout [14:0]DDR_addr,
+  inout [2:0]DDR_ba,
+  inout DDR_cas_n,
+  inout DDR_ck_n,
+  inout DDR_ck_p,
+  inout DDR_cke,
+  inout DDR_cs_n,
+  inout [3:0]DDR_dm,
+  inout [31:0]DDR_dq,
+  inout [3:0]DDR_dqs_n,
+  inout [3:0]DDR_dqs_p,
+  inout DDR_odt,
+  inout DDR_ras_n,
+  inout DDR_reset_n,
+  inout DDR_we_n,
+  inout FIXED_IO_ddr_vrn,
+  inout FIXED_IO_ddr_vrp,
+  inout [53:0]FIXED_IO_mio,
+  inout FIXED_IO_ps_clk,
+  inout FIXED_IO_ps_porb,
+  inout FIXED_IO_ps_srstb,
 
-  // output wire          eth_rst_n   ,
-  // input  wire          eth_rxck    ,
-  // input  wire          eth_rxctl   ,
-  // input  wire [3:0]    eth_rxd     ,
-  // output wire          eth_txck    ,
-  // output wire          eth_txctl   ,
-  // output wire [3:0]    eth_txd     ,
-  // inout  wire          eth_mdio    ,
-  // output logic         eth_mdc     ,
-  output logic [ 7:0]  led         ,
+
+
   input  logic         trst_n      ,
 
-  // SPI
-  // output logic        spi_mosi    ,
-  // input  logic        spi_miso    ,
-  // output logic        spi_ss      ,
-  // output logic        spi_clk_o   ,
-  // common part
-  // input logic      trst_n      ,
+
   input  logic        tck         ,
   input  logic        tms         ,
   input  logic        tdi         ,
-  output wire         tdo         ,
-  input  logic        rx          ,
-  output logic        tx
+  output wire         tdo         
 );
 // 24 MByte in 8 byte words
 localparam NumWords = (24 * 1024 * 1024) / 8;
@@ -92,24 +77,19 @@ logic debug_req_irq;
 logic time_irq;
 logic ipi;
 
-logic clk;
-// logic eth_clk;
-// logic spi_clk_i;
-// logic phy_tx_clk;
-// logic sd_clk_sys;
+logic sys_clk;
+
+
 
 // logic ddr_sync_reset;
 // logic ddr_clock_out;
 
-logic rst_n, rst;
+logic rst_n;
 
 // we need to switch reset polarity
 
-logic cpu_reset;
-assign cpu_reset  = ~cpu_resetn;
 
 
-logic pll_locked;
 
 // ROM
 logic                    rom_req;
@@ -134,14 +114,12 @@ logic [NBSlave-1:0] pc_asserted;
 
 rstgen i_rstgen_main (
     .clk_i        ( sys_clk ),
-    .rst_ni       ( pll_locked & (~ndmreset) ),
+    .rst_ni       (  (~ndmreset) ),
     .test_mode_i  ( test_en                  ),
     .rst_no       ( ndmreset_n               ),
     .init_no      (                          ) // keep open
 );
 
-assign rst_n = cpu_resetn;
-assign rst = cpu_reset;
 
 // ---------------
 // AXI Xbar
@@ -158,7 +136,7 @@ axi_node_wrap_with_slices #(
     .MASTER_SLICE_DEPTH ( 2                          ),
     .SLAVE_SLICE_DEPTH  ( 2                          )
 ) i_axi_xbar (
-    .clk          ( clk        ),
+    .clk          ( sys_clk        ),
     .rst_n        ( ndmreset_n ),
     .test_en_i    ( test_en    ),
     .slave        ( slave      ),
@@ -168,11 +146,12 @@ axi_node_wrap_with_slices #(
         ariane_soc::ROMBase,
         ariane_soc::CLINTBase,
         ariane_soc::PLICBase,
-        ariane_soc::UARTBase,
-        ariane_soc::TimerBase,
-        ariane_soc::SPIBase,
-        ariane_soc::EthernetBase,
-        ariane_soc::GPIOBase,
+        ariane_soc::ZYNQBase,
+        // ariane_soc::UARTBase,
+        // ariane_soc::TimerBase,
+        // ariane_soc::SPIBase,
+        // ariane_soc::EthernetBase,
+        // ariane_soc::GPIOBase,
         ariane_soc::DRAMBase
     }),
     .end_addr_i   ({
@@ -180,11 +159,12 @@ axi_node_wrap_with_slices #(
         ariane_soc::ROMBase      + ariane_soc::ROMLength - 1,
         ariane_soc::CLINTBase    + ariane_soc::CLINTLength - 1,
         ariane_soc::PLICBase     + ariane_soc::PLICLength - 1,
-        ariane_soc::UARTBase     + ariane_soc::UARTLength - 1,
-        ariane_soc::TimerBase    + ariane_soc::TimerLength - 1,
-        ariane_soc::SPIBase      + ariane_soc::SPILength - 1,
-        ariane_soc::EthernetBase + ariane_soc::EthernetLength -1,
-        ariane_soc::GPIOBase     + ariane_soc::GPIOLength - 1,
+        ariane_soc::ZYNQBase     + ariane_soc::ZYNQLength - 1,
+        // ariane_soc::UARTBase     + ariane_soc::UARTLength - 1,
+        // ariane_soc::TimerBase    + ariane_soc::TimerLength - 1,
+        // ariane_soc::SPIBase      + ariane_soc::SPILength - 1,
+        // ariane_soc::EthernetBase + ariane_soc::EthernetLength -1,
+        // ariane_soc::GPIOBase     + ariane_soc::GPIOLength - 1,
         ariane_soc::DRAMBase     + ariane_soc::DRAMLength - 1
     }),
     .valid_rule_i (ariane_soc::ValidRule)
@@ -194,7 +174,7 @@ axi_node_wrap_with_slices #(
 // Debug Module
 // ---------------
 dmi_jtag i_dmi_jtag (
-    .clk_i                ( clk                  ),
+    .clk_i                ( sys_clk                  ),
     .rst_ni               ( rst_n                ),
     .dmi_rst_no           (                      ), // keep open
     .testmode_i           ( test_en              ),
@@ -237,7 +217,7 @@ dm_top #(
     .BusWidth         ( AxiDataWidth      ),
     .SelectableHarts  ( 1'b1              )
 ) i_dm_top (
-    .clk_i            ( clk               ),
+    .clk_i            ( sys_clk               ),
     .rst_ni           ( rst_n             ), // PoR
     .testmode_i       ( test_en           ),
     .ndmreset_o       ( ndmreset          ),
@@ -274,7 +254,7 @@ axi2mem #(
     .AXI_DATA_WIDTH ( AxiDataWidth        ),
     .AXI_USER_WIDTH ( AxiUserWidth        )
 ) i_dm_axi2mem (
-    .clk_i      ( clk                       ),
+    .clk_i      ( sys_clk                       ),
     .rst_ni     ( rst_n                     ),
     .slave      ( master[ariane_soc::Debug] ),
     .req_o      ( dm_slave_req              ),
@@ -294,7 +274,7 @@ axi_master_connect i_dm_axi_master_connect (
 axi_adapter #(
     .DATA_WIDTH            ( AxiDataWidth              )
 ) i_dm_axi_master (
-    .clk_i                 ( clk                       ),
+    .clk_i                 ( sys_clk                       ),
     .rst_ni                ( rst_n                     ),
     .req_i                 ( dm_master_req             ),
     .type_i                ( ariane_axi::SINGLE_REQ    ),
@@ -324,7 +304,7 @@ ariane_axi::resp_t   axi_ariane_resp;
 ariane #(
     .ArianeCfg ( ariane_soc::ArianeSocCfg )
 ) i_ariane (
-    .clk_i        ( clk                 ),
+    .clk_i        ( sys_clk                 ),
     .rst_ni       ( ndmreset_n          ),
     .boot_addr_i  ( ariane_soc::ROMBase ), // start fetching from ROM
     .hart_id_i    ( '0                  ),
@@ -351,12 +331,12 @@ clint #(
     .AXI_ID_WIDTH   ( AxiIdWidthSlaves ),
     .NR_CORES       ( 1                )
 ) i_clint (
-    .clk_i       ( clk            ),
+    .clk_i       ( sys_clk            ),
     .rst_ni      ( ndmreset_n     ),
     .testmode_i  ( test_en        ),
     .axi_req_i   ( axi_clint_req  ),
     .axi_resp_o  ( axi_clint_resp ),
-    .rtc_i       ( rtc_clk  ),
+    .rtc_i       ( sys_clk  ),
     .timer_irq_o ( timer_irq      ),
     .ipi_o       ( ipi            )
 );
@@ -372,7 +352,7 @@ axi2mem #(
     .AXI_DATA_WIDTH ( AxiDataWidth     ),
     .AXI_USER_WIDTH ( AxiUserWidth     )
 ) i_axi2rom (
-    .clk_i  ( clk                     ),
+    .clk_i  ( sys_clk                     ),
     .rst_ni ( ndmreset_n              ),
     .slave  ( master[ariane_soc::ROM] ),
     .req_o  ( rom_req                 ),
@@ -384,7 +364,7 @@ axi2mem #(
 );
 
 bootrom i_bootrom (
-    .clk_i   ( clk       ),
+    .clk_i   ( sys_clk       ),
     .req_i   ( rom_req   ),
     .addr_i  ( rom_addr  ),
     .rdata_o ( rom_rdata )
@@ -395,29 +375,29 @@ bootrom i_bootrom (
 // ---------------
 
 
-ariane_peripherals #(
-    .AxiAddrWidth ( AxiAddrWidth     ),
-    .AxiDataWidth ( AxiDataWidth     ),
-    .AxiIdWidth   ( AxiIdWidthSlaves ),
-    .AxiUserWidth ( AxiUserWidth     ),
-    .InclUART     ( 1'b1             ),
-    .InclGPIO     ( 1'b1             )
-) i_ariane_peripherals (
-    .clk_i        ( clk                          ),
-    .rst_ni       ( ndmreset_n                   ),
-    .plic         ( master[ariane_soc::PLIC]     ),
-    .uart         ( master[ariane_soc::UART]     ),
-    .spi          ( master[ariane_soc::SPI]      ),
-    .gpio         ( master[ariane_soc::GPIO]     ),
-    .ethernet     ( master[ariane_soc::Ethernet] ),
-    .timer        ( master[ariane_soc::Timer]    ),
-    .irq_o        ( irq                          ),
-    .rx_i         ( rx                           ),
-    .tx_o         ( tx                           ),
+// ariane_peripherals #(
+//     .AxiAddrWidth ( AxiAddrWidth     ),
+//     .AxiDataWidth ( AxiDataWidth     ),
+//     .AxiIdWidth   ( AxiIdWidthSlaves ),
+//     .AxiUserWidth ( AxiUserWidth     ),
+//     .InclUART     ( 1'b1             ),
+//     .InclGPIO     ( 1'b1             )
+// ) i_ariane_peripherals (
+//     .clk_i        ( clk                          ),
+//     .rst_ni       ( ndmreset_n                   ),
+//     .plic         ( master[ariane_soc::PLIC]     ),
+//     .uart         ( master[ariane_soc::UART]     ),
+//     .spi          ( master[ariane_soc::SPI]      ),
+//     .gpio         ( master[ariane_soc::GPIO]     ),
+//     .ethernet     ( master[ariane_soc::Ethernet] ),
+//     .timer        ( master[ariane_soc::Timer]    ),
+//     .irq_o        ( irq                          ),
+//     .rx_i         ( rx                           ),
+//     .tx_o         ( tx                           ),
 
-      .leds_o         ( led                       )
+//       .leds_o         ( led                       )
 
-);
+// );
 
 
 // ---------------------
@@ -440,117 +420,244 @@ axi_riscv_atomics_wrap #(
     .AXI_MAX_WRITE_TXNS ( 1  ),
     .RISCV_WORD_WIDTH   ( 64 )
 ) i_axi_riscv_atomics (
-    .clk_i  ( clk                      ),
+    .clk_i  ( sys_clk                      ),
     .rst_ni ( ndmreset_n               ),
     .slv    ( master[ariane_soc::DRAM] ),
     .mst    ( dram                     )
 );
 
 
-logic clkfb;
+// logic clkfb;
 
-   MMCME2_BASE #(
-      .BANDWIDTH("OPTIMIZED"),   // Jitter programming (OPTIMIZED, HIGH, LOW)
-      .CLKFBOUT_MULT_F(10.0),     // Multiply value for all CLKOUT (2.000-64.000).
-      .CLKFBOUT_PHASE(0.0),      // Phase offset in degrees of CLKFB (-360.000-360.000).
-      .CLKIN1_PERIOD(10.0),       // Input clock period in ns to ps resolution (i.e. 33.333 is 30 MHz).
-      // CLKOUT0_DIVIDE - CLKOUT6_DIVIDE: Divide amount for each CLKOUT (1-128)
-      .CLKOUT1_DIVIDE(20),
-      .CLKOUT2_DIVIDE(8),
-      .CLKOUT3_DIVIDE(1),
-      .CLKOUT4_DIVIDE(20),
-      .CLKOUT5_DIVIDE(1),
-      .CLKOUT6_DIVIDE(1),
-      .CLKOUT0_DIVIDE_F(1.0),    // Divide amount for CLKOUT0 (1.000-128.000).
-      // CLKOUT0_DUTY_CYCLE - CLKOUT6_DUTY_CYCLE: Duty cycle for each CLKOUT (0.01-0.99).
-      .CLKOUT0_DUTY_CYCLE(0.5),
-      .CLKOUT1_DUTY_CYCLE(0.5),
-      .CLKOUT2_DUTY_CYCLE(0.5),
-      .CLKOUT3_DUTY_CYCLE(0.5),
-      .CLKOUT4_DUTY_CYCLE(0.5),
-      .CLKOUT5_DUTY_CYCLE(0.5),
-      .CLKOUT6_DUTY_CYCLE(0.5),
-      // CLKOUT0_PHASE - CLKOUT6_PHASE: Phase offset for each CLKOUT (-360.000-360.000).
-      .CLKOUT0_PHASE(0.0),
-      .CLKOUT1_PHASE(0.0),
-      .CLKOUT2_PHASE(0.0),
-      .CLKOUT3_PHASE(0.0),
-      .CLKOUT4_PHASE(0.0),
-      .CLKOUT5_PHASE(0.0),
-      .CLKOUT6_PHASE(0.0),
-      .CLKOUT4_CASCADE("FALSE"), // Cascade CLKOUT4 counter with CLKOUT6 (FALSE, TRUE)
-      .DIVCLK_DIVIDE(1),         // Master division value (1-106)
-      .REF_JITTER1(0.0),         // Reference input jitter in UI (0.000-0.999).
-      .STARTUP_WAIT("FALSE")     // Delays DONE until MMCM is locked (FALSE, TRUE)
-   )
-   MMCME2_BASE_inst (
-      // Clock Outputs: 1-bit (each) output: User configurable clock outputs
-      .CLKOUT0(clk),     // 50 MHz
-      .CLKOUT0B(),   
-      .CLKOUT1(),     
-      .CLKOUT1B(),   
-      .CLKOUT2(),     // 125 MHz quadrature (90 deg phase shift)
-      .CLKOUT2B(),   
-      .CLKOUT3(),     // 50 MHz clock
-      .CLKOUT3B(),   
-      .CLKOUT4(),     
-      .CLKOUT5(),     
-      .CLKOUT6(),     
-      // Feedback Clocks: 1-bit (each) output: Clock feedback ports
-      .CLKFBOUT(clkfb),   // 1-bit output: Feedback clock
-      .CLKFBOUTB(), // 1-bit output: Inverted CLKFBOUT
-      // Status Ports: 1-bit (each) output: MMCM status ports
-      .LOCKED(pll_locked),       // 1-bit output: LOCK
-      // Clock Inputs: 1-bit (each) input: Clock input
-      .CLKIN1(sys_clk),       // 100mhz
-      // Control Ports: 1-bit (each) input: MMCM control ports
-      .PWRDWN(),       // 1-bit input: Power-down
-      .RST(cpu_reset),             // 1-bit input: Reset
-      // Feedback Clocks: 1-bit (each) input: Clock feedback ports
-      .CLKFBIN(clkfb)      // 1-bit input: Feedback clock
-   );
+//    MMCME2_BASE #(
+//       .BANDWIDTH("OPTIMIZED"),   // Jitter programming (OPTIMIZED, HIGH, LOW)
+//       .CLKFBOUT_MULT_F(10.0),     // Multiply value for all CLKOUT (2.000-64.000).
+//       .CLKFBOUT_PHASE(0.0),      // Phase offset in degrees of CLKFB (-360.000-360.000).
+//       .CLKIN1_PERIOD(10.0),       // Input clock period in ns to ps resolution (i.e. 33.333 is 30 MHz).
+//       // CLKOUT0_DIVIDE - CLKOUT6_DIVIDE: Divide amount for each CLKOUT (1-128)
+//       .CLKOUT1_DIVIDE(20),
+//       .CLKOUT2_DIVIDE(8),
+//       .CLKOUT3_DIVIDE(1),
+//       .CLKOUT4_DIVIDE(20),
+//       .CLKOUT5_DIVIDE(1),
+//       .CLKOUT6_DIVIDE(1),
+//       .CLKOUT0_DIVIDE_F(1.0),    // Divide amount for CLKOUT0 (1.000-128.000).
+//       // CLKOUT0_DUTY_CYCLE - CLKOUT6_DUTY_CYCLE: Duty cycle for each CLKOUT (0.01-0.99).
+//       .CLKOUT0_DUTY_CYCLE(0.5),
+//       .CLKOUT1_DUTY_CYCLE(0.5),
+//       .CLKOUT2_DUTY_CYCLE(0.5),
+//       .CLKOUT3_DUTY_CYCLE(0.5),
+//       .CLKOUT4_DUTY_CYCLE(0.5),
+//       .CLKOUT5_DUTY_CYCLE(0.5),
+//       .CLKOUT6_DUTY_CYCLE(0.5),
+//       // CLKOUT0_PHASE - CLKOUT6_PHASE: Phase offset for each CLKOUT (-360.000-360.000).
+//       .CLKOUT0_PHASE(0.0),
+//       .CLKOUT1_PHASE(0.0),
+//       .CLKOUT2_PHASE(0.0),
+//       .CLKOUT3_PHASE(0.0),
+//       .CLKOUT4_PHASE(0.0),
+//       .CLKOUT5_PHASE(0.0),
+//       .CLKOUT6_PHASE(0.0),
+//       .CLKOUT4_CASCADE("FALSE"), // Cascade CLKOUT4 counter with CLKOUT6 (FALSE, TRUE)
+//       .DIVCLK_DIVIDE(1),         // Master division value (1-106)
+//       .REF_JITTER1(0.0),         // Reference input jitter in UI (0.000-0.999).
+//       .STARTUP_WAIT("FALSE")     // Delays DONE until MMCM is locked (FALSE, TRUE)
+//    )
+//    MMCME2_BASE_inst (
+//       // Clock Outputs: 1-bit (each) output: User configurable clock outputs
+//       .CLKOUT0(clk),     // 50 MHz
+//       .CLKOUT0B(),   
+//       .CLKOUT1(),     
+//       .CLKOUT1B(),   
+//       .CLKOUT2(),     // 125 MHz quadrature (90 deg phase shift)
+//       .CLKOUT2B(),   
+//       .CLKOUT3(),     // 50 MHz clock
+//       .CLKOUT3B(),   
+//       .CLKOUT4(),     
+//       .CLKOUT5(),     
+//       .CLKOUT6(),     
+//       // Feedback Clocks: 1-bit (each) output: Clock feedback ports
+//       .CLKFBOUT(clkfb),   // 1-bit output: Feedback clock
+//       .CLKFBOUTB(), // 1-bit output: Inverted CLKFBOUT
+//       // Status Ports: 1-bit (each) output: MMCM status ports
+//       .LOCKED(pll_locked),       // 1-bit output: LOCK
+//       // Clock Inputs: 1-bit (each) input: Clock input
+//       .CLKIN1(sys_clk),       // 100mhz
+//       // Control Ports: 1-bit (each) input: MMCM control ports
+//       .PWRDWN(),       // 1-bit input: Power-down
+//       .RST(cpu_reset),             // 1-bit input: Reset
+//       // Feedback Clocks: 1-bit (each) input: Clock feedback ports
+//       .CLKFBIN(clkfb)      // 1-bit input: Feedback clock
+//    );
 
 
-axi_bram i_axi_bram
-    (
-    .s_axi_aclk(clk),
-    .s_axi_aresetn(ndmreset_n),
+// axi_bram i_axi_bram
+//     (
+//     .s_axi_aclk(clk),
+//     .s_axi_aresetn(ndmreset_n),
 
-    .s_axi_awid(dram.aw_id),
-    .s_axi_awaddr(dram.aw_addr),
-    .s_axi_awlen(dram.aw_len),
-    .s_axi_awsize(dram.aw_size),
-    .s_axi_awburst(dram.aw_burst),
-    .s_axi_awlock(dram.aw_lock),
-    .s_axi_awcache(dram.aw_cache),
-    .s_axi_awprot(dram.aw_prot),
-    .s_axi_awvalid(dram.aw_valid),
-    .s_axi_awready(dram.aw_ready),
-    .s_axi_wdata(dram.w_data),
-    .s_axi_wstrb(dram.w_strb),
-    .s_axi_wlast(dram.w_last),
-    .s_axi_wvalid(dram.w_valid),
-    .s_axi_wready(dram.w_ready),
-    .s_axi_bid(dram.b_id),
-    .s_axi_bresp(dram.b_resp),
-    .s_axi_bvalid(dram.b_valid),
-    .s_axi_bready(dram.b_ready),
-    .s_axi_arid(dram.ar_id),
-    .s_axi_araddr(dram.ar_addr),
-    .s_axi_arlen(dram.ar_len),
-    .s_axi_arsize(dram.ar_size),
-    .s_axi_arburst(dram.ar_burst),
-    .s_axi_arlock(dram.ar_lock),
-    .s_axi_arcache(dram.ar_cache),
-    .s_axi_arprot(dram.ar_prot),
-    .s_axi_arvalid(dram.ar_valid),
-    .s_axi_arready(dram.ar_ready),
-    .s_axi_rid(dram.r_id),
-    .s_axi_rdata(dram.r_data),
-    .s_axi_rresp(dram.r_resp),
-    .s_axi_rlast(dram.r_last),
-    .s_axi_rvalid(dram.r_valid),
-    .s_axi_rready(dram.r_ready)
+//     .s_axi_awid(dram.aw_id),
+//     .s_axi_awaddr(dram.aw_addr),
+//     .s_axi_awlen(dram.aw_len),
+//     .s_axi_awsize(dram.aw_size),
+//     .s_axi_awburst(dram.aw_burst),
+//     .s_axi_awlock(dram.aw_lock),
+//     .s_axi_awcache(dram.aw_cache),
+//     .s_axi_awprot(dram.aw_prot),
+//     .s_axi_awvalid(dram.aw_valid),
+//     .s_axi_awready(dram.aw_ready),
+//     .s_axi_wdata(dram.w_data),
+//     .s_axi_wstrb(dram.w_strb),
+//     .s_axi_wlast(dram.w_last),
+//     .s_axi_wvalid(dram.w_valid),
+//     .s_axi_wready(dram.w_ready),
+//     .s_axi_bid(dram.b_id),
+//     .s_axi_bresp(dram.b_resp),
+//     .s_axi_bvalid(dram.b_valid),
+//     .s_axi_bready(dram.b_ready),
+//     .s_axi_arid(dram.ar_id),
+//     .s_axi_araddr(dram.ar_addr),
+//     .s_axi_arlen(dram.ar_len),
+//     .s_axi_arsize(dram.ar_size),
+//     .s_axi_arburst(dram.ar_burst),
+//     .s_axi_arlock(dram.ar_lock),
+//     .s_axi_arcache(dram.ar_cache),
+//     .s_axi_arprot(dram.ar_prot),
+//     .s_axi_arvalid(dram.ar_valid),
+//     .s_axi_arready(dram.ar_ready),
+//     .s_axi_rid(dram.r_id),
+//     .s_axi_rdata(dram.r_data),
+//     .s_axi_rresp(dram.r_resp),
+//     .s_axi_rlast(dram.r_last),
+//     .s_axi_rvalid(dram.r_valid),
+//     .s_axi_rready(dram.r_ready)
+//   );
+
+ariane_axi::req_t    axi_zynq_req;
+ariane_axi::resp_t   axi_zynq_resp;
+
+axi_slave_connect i_axi_slave_connect_zynq (.axi_req_o(axi_zynq_req), .axi_resp_i(axi_zynq_resp), .slave(master[ariane_soc::ZYNQ]));
+
+
+
+xilinx_ariane_wrapper i_xilinx_ariane_wrapper
+(   
+    .DDR_addr(DDR_addr),
+    .DDR_ba(DDR_ba),
+    .DDR_cas_n(DDR_cas_n),
+    .DDR_ck_n(DDR_ck_n),
+    .DDR_ck_p(DDR_ck_p),
+    .DDR_cke(DDR_cke),
+    .DDR_cs_n(DDR_cs_n),
+    .DDR_dm(DDR_dm),
+    .DDR_dq(DDR_dq),
+    .DDR_dqs_n(DDR_dqs_n),
+    .DDR_dqs_p(DDR_dqs_p),
+    .DDR_odt(DDR_odt),
+    .DDR_ras_n(DDR_ras_n),
+    .DDR_reset_n(DDR_reset_n),
+    .DDR_we_n(DDR_we_n),
+
+    .peripheral_aresetn(rst_n),
+    .FCLK_CLK0(sys_clk),
+
+    .FIXED_IO_ddr_vrn(FIXED_IO_ddr_vrn),
+    .FIXED_IO_ddr_vrp(FIXED_IO_ddr_vrp),
+    .FIXED_IO_mio(FIXED_IO_mio),
+    .FIXED_IO_ps_clk(FIXED_IO_ps_clk),
+    .FIXED_IO_ps_porb(FIXED_IO_ps_porb),
+    .FIXED_IO_ps_srstb(FIXED_IO_ps_srstb),
+
+
+    .S_AXI_GP0_araddr(axi_zynq_req.ar.addr),
+    .S_AXI_GP0_arburst(axi_zynq_req.ar.burst),
+    .S_AXI_GP0_arcache(axi_zynq_req.ar.cache),
+    .S_AXI_GP0_arid(axi_zynq_req.ar.id),
+    .S_AXI_GP0_arlen(axi_zynq_req.ar.len),
+    .S_AXI_GP0_arlock(axi_zynq_req.ar.lock),
+    .S_AXI_GP0_arprot(axi_zynq_req.ar.prot),
+    .S_AXI_GP0_arqos(axi_zynq_req.ar.qos),
+    .S_AXI_GP0_arready(axi_zynq_resp.ar_ready),
+    .S_AXI_GP0_arsize(axi_zynq_req.ar.size),
+    .S_AXI_GP0_arvalid(axi_zynq_req.ar_valid),
+
+    .S_AXI_GP0_awaddr(axi_zynq_req.aw.addr),
+    .S_AXI_GP0_awburst(axi_zynq_req.aw.burst),
+    .S_AXI_GP0_awcache(axi_zynq_req.aw.cache),
+    .S_AXI_GP0_awid(axi_zynq_req.aw.id),
+    .S_AXI_GP0_awlen(axi_zynq_req.aw.len),
+    .S_AXI_GP0_awlock(axi_zynq_req.aw.lock),
+    .S_AXI_GP0_awprot(axi_zynq_req.aw.prot),
+    .S_AXI_GP0_awqos(axi_zynq_req.aw.qos),
+    .S_AXI_GP0_awready(axi_zynq_resp.aw_ready),
+    .S_AXI_GP0_awsize(axi_zynq_req.aw.size),
+    .S_AXI_GP0_awvalid(axi_zynq_req.aw_valid),
+
+    .S_AXI_GP0_bid(axi_zynq_resp.b.id),
+    .S_AXI_GP0_bready(axi_zynq_req.b_ready),
+    .S_AXI_GP0_bresp(axi_zynq_resp.b.resp),
+    .S_AXI_GP0_bvalid(axi_zynq_resp.b_valid),
+
+    .S_AXI_GP0_rdata(axi_zynq_resp.r.data),
+    .S_AXI_GP0_rid(axi_zynq_resp.r.id),
+    .S_AXI_GP0_rlast(axi_zynq_resp.r.last),
+    .S_AXI_GP0_rready(axi_zynq_req.r_ready),
+    .S_AXI_GP0_rresp(axi_zynq_resp.r.resp),
+    .S_AXI_GP0_rvalid(axi_zynq_resp.r_valid),
+
+    .S_AXI_GP0_wdata(axi_zynq_req.w.data),
+    .S_AXI_GP0_wid(),
+    .S_AXI_GP0_wlast(axi_zynq_req.w.last),
+    .S_AXI_GP0_wready(axi_zynq_resp.w_ready),
+    .S_AXI_GP0_wstrb(axi_zynq_req.w.strb),
+    .S_AXI_GP0_wvalid(axi_zynq_req.w_valid),
+
+
+
+    .S_AXI_HP0_araddr(dram.ar_addr),
+    .S_AXI_HP0_arburst(dram.ar_burst),
+    .S_AXI_HP0_arcache(dram.ar_cache),
+    .S_AXI_HP0_arid(dram.ar_id),
+    .S_AXI_HP0_arlen(dram.ar_len),
+    .S_AXI_HP0_arlock(dram.ar_lock),
+    .S_AXI_HP0_arprot(dram.ar_prot),
+    .S_AXI_HP0_arqos(dram.ar_qos),
+    .S_AXI_HP0_arready(dram.ar_ready),
+    .S_AXI_HP0_arsize(dram.ar_size),
+    .S_AXI_HP0_arvalid(dram.ar_valid),
+
+    .S_AXI_HP0_awaddr(dram.aw_addr),
+    .S_AXI_HP0_awburst(dram.aw_burst),
+    .S_AXI_HP0_awcache(dram.aw_cache),
+    .S_AXI_HP0_awid(dram.aw_id),
+    .S_AXI_HP0_awlen(dram.aw_len),
+    .S_AXI_HP0_awlock(dram.aw_lock),
+    .S_AXI_HP0_awprot(dram.aw_prot),
+    .S_AXI_HP0_awqos(dram.aw_qos),
+    .S_AXI_HP0_awready(dram.aw_ready),
+    .S_AXI_HP0_awsize(dram.aw_size),
+    .S_AXI_HP0_awvalid(dram.aw_valid),
+
+    .S_AXI_HP0_bid(dram.b_id),
+    .S_AXI_HP0_bready(dram.b_ready),
+    .S_AXI_HP0_bresp(dram.b_resp),
+    .S_AXI_HP0_bvalid(dram.b_valid),
+
+    .S_AXI_HP0_rdata(dram.r_data),
+    .S_AXI_HP0_rid(dram.r_id),
+    .S_AXI_HP0_rlast(dram.r_last),
+    .S_AXI_HP0_rready(dram.r_ready),
+    .S_AXI_HP0_rresp(dram.r_resp),
+    .S_AXI_HP0_rvalid(dram.r_valid),
+
+    .S_AXI_HP0_wdata(dram.w_data),
+    .S_AXI_HP0_wid(),
+    .S_AXI_HP0_wlast(dram.w_last),
+    .S_AXI_HP0_wready(dram.w_ready),
+    .S_AXI_HP0_wstrb(dram.w_strb),
+    .S_AXI_HP0_wvalid(dram.w_valid),
+
+
   );
 
 
