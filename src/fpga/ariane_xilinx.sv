@@ -81,20 +81,10 @@ logic sys_clk;
 
 
 
-// logic ddr_sync_reset;
-// logic ddr_clock_out;
 
 logic rst_n;
 
-// we need to switch reset polarity
 
-
-
-
-// ROM
-logic                    rom_req;
-logic [AxiAddrWidth-1:0] rom_addr;
-logic [AxiDataWidth-1:0] rom_rdata;
 
 // Debug
 logic          debug_req_valid;
@@ -120,55 +110,6 @@ rstgen i_rstgen_main (
     .init_no      (                          ) // keep open
 );
 
-
-// ---------------
-// AXI Xbar
-// ---------------
-axi_node_wrap_with_slices #(
-    // three ports from Ariane (instruction, data and bypass)
-    .NB_SLAVE           ( NBSlave                    ),
-    .NB_MASTER          ( ariane_soc::NB_PERIPHERALS ),
-    .NB_REGION          ( ariane_soc::NrRegion       ),
-    .AXI_ADDR_WIDTH     ( AxiAddrWidth               ),
-    .AXI_DATA_WIDTH     ( AxiDataWidth               ),
-    .AXI_USER_WIDTH     ( AxiUserWidth               ),
-    .AXI_ID_WIDTH       ( AxiIdWidthMaster           ),
-    .MASTER_SLICE_DEPTH ( 2                          ),
-    .SLAVE_SLICE_DEPTH  ( 2                          )
-) i_axi_xbar (
-    .clk          ( sys_clk        ),
-    .rst_n        ( ndmreset_n ),
-    .test_en_i    ( test_en    ),
-    .slave        ( slave      ),
-    .master       ( master     ),
-    .start_addr_i ({
-        ariane_soc::DebugBase,
-        ariane_soc::ROMBase,
-        ariane_soc::CLINTBase,
-        ariane_soc::PLICBase,
-        ariane_soc::ZYNQBase,
-        // ariane_soc::UARTBase,
-        // ariane_soc::TimerBase,
-        // ariane_soc::SPIBase,
-        // ariane_soc::EthernetBase,
-        // ariane_soc::GPIOBase,
-        ariane_soc::DRAMBase
-    }),
-    .end_addr_i   ({
-        ariane_soc::DebugBase    + ariane_soc::DebugLength - 1,
-        ariane_soc::ROMBase      + ariane_soc::ROMLength - 1,
-        ariane_soc::CLINTBase    + ariane_soc::CLINTLength - 1,
-        ariane_soc::PLICBase     + ariane_soc::PLICLength - 1,
-        ariane_soc::ZYNQBase     + ariane_soc::ZYNQLength - 1,
-        // ariane_soc::UARTBase     + ariane_soc::UARTLength - 1,
-        // ariane_soc::TimerBase    + ariane_soc::TimerLength - 1,
-        // ariane_soc::SPIBase      + ariane_soc::SPILength - 1,
-        // ariane_soc::EthernetBase + ariane_soc::EthernetLength -1,
-        // ariane_soc::GPIOBase     + ariane_soc::GPIOLength - 1,
-        ariane_soc::DRAMBase     + ariane_soc::DRAMLength - 1
-    }),
-    .valid_rule_i (ariane_soc::ValidRule)
-);
 
 // ---------------
 // Debug Module
@@ -265,11 +206,11 @@ axi2mem #(
     .data_i     ( dm_slave_rdata            )
 );
 
-axi_master_connect i_dm_axi_master_connect (
-  .axi_req_i(dm_axi_m_req),
-  .axi_resp_o(dm_axi_m_resp),
-  .master(slave[1])
-);
+// axi_master_connect i_dm_axi_master_connect (
+//   .axi_req_i(dm_axi_m_req),
+//   .axi_resp_o(dm_axi_m_resp),
+//   .master(slave[1])
+// );
 
 axi_adapter #(
     .DATA_WIDTH            ( AxiDataWidth              )
@@ -306,7 +247,7 @@ ariane #(
 ) i_ariane (
     .clk_i        ( sys_clk                 ),
     .rst_ni       ( ndmreset_n          ),
-    .boot_addr_i  ( ariane_soc::ROMBase ), // start fetching from ROM
+    .boot_addr_i  ( 64'hfc00_0000 ), // start fetching from ROM
     .hart_id_i    ( '0                  ),
     .irq_i        ( irq                 ),
     .ipi_i        ( ipi                 ),
@@ -316,7 +257,7 @@ ariane #(
     .axi_resp_i   ( axi_ariane_resp     )
 );
 
-axi_master_connect i_axi_master_connect_ariane (.axi_req_i(axi_ariane_req), .axi_resp_o(axi_ariane_resp), .master(slave[0]));
+// axi_master_connect i_axi_master_connect_ariane (.axi_req_i(axi_ariane_req), .axi_resp_o(axi_ariane_resp), .master(slave[0]));
 
 // ---------------
 // CLINT
@@ -341,68 +282,9 @@ clint #(
     .ipi_o       ( ipi            )
 );
 
-axi_slave_connect i_axi_slave_connect_clint (.axi_req_o(axi_clint_req), .axi_resp_i(axi_clint_resp), .slave(master[ariane_soc::CLINT]));
-
-// ---------------
-// ROM
-// ---------------
-axi2mem #(
-    .AXI_ID_WIDTH   ( AxiIdWidthSlaves ),
-    .AXI_ADDR_WIDTH ( AxiAddrWidth     ),
-    .AXI_DATA_WIDTH ( AxiDataWidth     ),
-    .AXI_USER_WIDTH ( AxiUserWidth     )
-) i_axi2rom (
-    .clk_i  ( sys_clk                     ),
-    .rst_ni ( ndmreset_n              ),
-    .slave  ( master[ariane_soc::ROM] ),
-    .req_o  ( rom_req                 ),
-    .we_o   (                         ),
-    .addr_o ( rom_addr                ),
-    .be_o   (                         ),
-    .data_o (                         ),
-    .data_i ( rom_rdata               )
-);
-
-bootrom i_bootrom (
-    .clk_i   ( sys_clk       ),
-    .req_i   ( rom_req   ),
-    .addr_i  ( rom_addr  ),
-    .rdata_o ( rom_rdata )
-);
-
-// ---------------
-// Peripherals
-// ---------------
+// axi_slave_connect i_axi_slave_connect_clint (.axi_req_o(axi_clint_req), .axi_resp_i(axi_clint_resp), .slave(master[ariane_soc::CLINT]));
 
 
-// ariane_peripherals #(
-//     .AxiAddrWidth ( AxiAddrWidth     ),
-//     .AxiDataWidth ( AxiDataWidth     ),
-//     .AxiIdWidth   ( AxiIdWidthSlaves ),
-//     .AxiUserWidth ( AxiUserWidth     ),
-//     .InclUART     ( 1'b1             ),
-//     .InclGPIO     ( 1'b1             )
-// ) i_ariane_peripherals (
-//     .clk_i        ( clk                          ),
-//     .rst_ni       ( ndmreset_n                   ),
-//     .plic         ( master[ariane_soc::PLIC]     ),
-//     .uart         ( master[ariane_soc::UART]     ),
-//     .spi          ( master[ariane_soc::SPI]      ),
-//     .gpio         ( master[ariane_soc::GPIO]     ),
-//     .ethernet     ( master[ariane_soc::Ethernet] ),
-//     .timer        ( master[ariane_soc::Timer]    ),
-//     .irq_o        ( irq                          ),
-//     .rx_i         ( rx                           ),
-//     .tx_o         ( tx                           ),
-
-//       .leds_o         ( led                       )
-
-// );
-
-
-// ---------------------
-// Board peripherals
-// ---------------------
 
 
 AXI_BUS #(
@@ -427,116 +309,11 @@ axi_riscv_atomics_wrap #(
 );
 
 
-// logic clkfb;
-
-//    MMCME2_BASE #(
-//       .BANDWIDTH("OPTIMIZED"),   // Jitter programming (OPTIMIZED, HIGH, LOW)
-//       .CLKFBOUT_MULT_F(10.0),     // Multiply value for all CLKOUT (2.000-64.000).
-//       .CLKFBOUT_PHASE(0.0),      // Phase offset in degrees of CLKFB (-360.000-360.000).
-//       .CLKIN1_PERIOD(10.0),       // Input clock period in ns to ps resolution (i.e. 33.333 is 30 MHz).
-//       // CLKOUT0_DIVIDE - CLKOUT6_DIVIDE: Divide amount for each CLKOUT (1-128)
-//       .CLKOUT1_DIVIDE(20),
-//       .CLKOUT2_DIVIDE(8),
-//       .CLKOUT3_DIVIDE(1),
-//       .CLKOUT4_DIVIDE(20),
-//       .CLKOUT5_DIVIDE(1),
-//       .CLKOUT6_DIVIDE(1),
-//       .CLKOUT0_DIVIDE_F(1.0),    // Divide amount for CLKOUT0 (1.000-128.000).
-//       // CLKOUT0_DUTY_CYCLE - CLKOUT6_DUTY_CYCLE: Duty cycle for each CLKOUT (0.01-0.99).
-//       .CLKOUT0_DUTY_CYCLE(0.5),
-//       .CLKOUT1_DUTY_CYCLE(0.5),
-//       .CLKOUT2_DUTY_CYCLE(0.5),
-//       .CLKOUT3_DUTY_CYCLE(0.5),
-//       .CLKOUT4_DUTY_CYCLE(0.5),
-//       .CLKOUT5_DUTY_CYCLE(0.5),
-//       .CLKOUT6_DUTY_CYCLE(0.5),
-//       // CLKOUT0_PHASE - CLKOUT6_PHASE: Phase offset for each CLKOUT (-360.000-360.000).
-//       .CLKOUT0_PHASE(0.0),
-//       .CLKOUT1_PHASE(0.0),
-//       .CLKOUT2_PHASE(0.0),
-//       .CLKOUT3_PHASE(0.0),
-//       .CLKOUT4_PHASE(0.0),
-//       .CLKOUT5_PHASE(0.0),
-//       .CLKOUT6_PHASE(0.0),
-//       .CLKOUT4_CASCADE("FALSE"), // Cascade CLKOUT4 counter with CLKOUT6 (FALSE, TRUE)
-//       .DIVCLK_DIVIDE(1),         // Master division value (1-106)
-//       .REF_JITTER1(0.0),         // Reference input jitter in UI (0.000-0.999).
-//       .STARTUP_WAIT("FALSE")     // Delays DONE until MMCM is locked (FALSE, TRUE)
-//    )
-//    MMCME2_BASE_inst (
-//       // Clock Outputs: 1-bit (each) output: User configurable clock outputs
-//       .CLKOUT0(clk),     // 50 MHz
-//       .CLKOUT0B(),   
-//       .CLKOUT1(),     
-//       .CLKOUT1B(),   
-//       .CLKOUT2(),     // 125 MHz quadrature (90 deg phase shift)
-//       .CLKOUT2B(),   
-//       .CLKOUT3(),     // 50 MHz clock
-//       .CLKOUT3B(),   
-//       .CLKOUT4(),     
-//       .CLKOUT5(),     
-//       .CLKOUT6(),     
-//       // Feedback Clocks: 1-bit (each) output: Clock feedback ports
-//       .CLKFBOUT(clkfb),   // 1-bit output: Feedback clock
-//       .CLKFBOUTB(), // 1-bit output: Inverted CLKFBOUT
-//       // Status Ports: 1-bit (each) output: MMCM status ports
-//       .LOCKED(pll_locked),       // 1-bit output: LOCK
-//       // Clock Inputs: 1-bit (each) input: Clock input
-//       .CLKIN1(sys_clk),       // 100mhz
-//       // Control Ports: 1-bit (each) input: MMCM control ports
-//       .PWRDWN(),       // 1-bit input: Power-down
-//       .RST(cpu_reset),             // 1-bit input: Reset
-//       // Feedback Clocks: 1-bit (each) input: Clock feedback ports
-//       .CLKFBIN(clkfb)      // 1-bit input: Feedback clock
-//    );
-
-
-// axi_bram i_axi_bram
-//     (
-//     .s_axi_aclk(clk),
-//     .s_axi_aresetn(ndmreset_n),
-
-//     .s_axi_awid(dram.aw_id),
-//     .s_axi_awaddr(dram.aw_addr),
-//     .s_axi_awlen(dram.aw_len),
-//     .s_axi_awsize(dram.aw_size),
-//     .s_axi_awburst(dram.aw_burst),
-//     .s_axi_awlock(dram.aw_lock),
-//     .s_axi_awcache(dram.aw_cache),
-//     .s_axi_awprot(dram.aw_prot),
-//     .s_axi_awvalid(dram.aw_valid),
-//     .s_axi_awready(dram.aw_ready),
-//     .s_axi_wdata(dram.w_data),
-//     .s_axi_wstrb(dram.w_strb),
-//     .s_axi_wlast(dram.w_last),
-//     .s_axi_wvalid(dram.w_valid),
-//     .s_axi_wready(dram.w_ready),
-//     .s_axi_bid(dram.b_id),
-//     .s_axi_bresp(dram.b_resp),
-//     .s_axi_bvalid(dram.b_valid),
-//     .s_axi_bready(dram.b_ready),
-//     .s_axi_arid(dram.ar_id),
-//     .s_axi_araddr(dram.ar_addr),
-//     .s_axi_arlen(dram.ar_len),
-//     .s_axi_arsize(dram.ar_size),
-//     .s_axi_arburst(dram.ar_burst),
-//     .s_axi_arlock(dram.ar_lock),
-//     .s_axi_arcache(dram.ar_cache),
-//     .s_axi_arprot(dram.ar_prot),
-//     .s_axi_arvalid(dram.ar_valid),
-//     .s_axi_arready(dram.ar_ready),
-//     .s_axi_rid(dram.r_id),
-//     .s_axi_rdata(dram.r_data),
-//     .s_axi_rresp(dram.r_resp),
-//     .s_axi_rlast(dram.r_last),
-//     .s_axi_rvalid(dram.r_valid),
-//     .s_axi_rready(dram.r_ready)
-//   );
 
 ariane_axi::req_t    axi_zynq_req;
 ariane_axi::resp_t   axi_zynq_resp;
 
-axi_slave_connect i_axi_slave_connect_zynq (.axi_req_o(axi_zynq_req), .axi_resp_i(axi_zynq_resp), .slave(master[ariane_soc::ZYNQ]));
+// axi_slave_connect i_axi_slave_connect_zynq (.axi_req_o(axi_zynq_req), .axi_resp_i(axi_zynq_resp), .slave(master[ariane_soc::ZYNQ]));
 
 
 
@@ -664,6 +441,147 @@ xilinx_ariane_wrapper i_xilinx_ariane_wrapper
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// ariane_axi::req_t    axi_clint_req;
+// ariane_axi::resp_t   axi_clint_resp;
+
+ariane_axi::req_t    axi_dram_req;
+ariane_axi::resp_t   axi_dram_resp;
+
+ariane_axi::req_t    axi_debug_req;
+ariane_axi::resp_t   axi_debug_resp;
+// axi_slave_connect i_axi_slave_connect_clint (.axi_req_o(axi_clint_req), .axi_resp_i(axi_clint_resp), .slave(master[ariane_soc::CLINT]));
+axi_master_connect i_axi_master_connect_dram (.axi_req_i(axi_dram_req), .axi_resp_o(axi_dram_resp), .master(master[ariane_soc::DRAM]));
+axi_master_connect i_axi_master_connect_debug (.axi_req_i(axi_debug_req), .axi_resp_o(axi_debug_resp), .master(master[ariane_soc::Debug]));
+
+
+
+axi_crossbar i_axi_crossbar
+(
+  .aclk(sys_clk),
+  .aresetn(ndmreset_n),
+
+
+  .s_axi_awid   ( { dm_axi_m_req.aw.id,     axi_ariane_req.aw.id }),
+  .s_axi_awaddr ( { dm_axi_m_req.aw.addr,   axi_ariane_req.aw.addr }),
+  .s_axi_awlen  ( { dm_axi_m_req.aw.len,    axi_ariane_req.aw.len }),
+  .s_axi_awsize ( { dm_axi_m_req.aw.size,   axi_ariane_req.aw.size }),
+  .s_axi_awburst( { dm_axi_m_req.aw.burst,  axi_ariane_req.aw.burst }),
+  .s_axi_awlock ( { dm_axi_m_req.aw.lock,   axi_ariane_req.aw.lock }),
+  .s_axi_awcache( { dm_axi_m_req.aw.cache,  axi_ariane_req.aw.cache }),
+  .s_axi_awprot ( { dm_axi_m_req.aw.prot,   axi_ariane_req.aw.prot }),
+  .s_axi_awqos  ( { dm_axi_m_req.aw.qos,    axi_ariane_req.aw.qos }),
+  .s_axi_awvalid( { dm_axi_m_req.aw_valid,  axi_ariane_req.aw_valid }),
+  .s_axi_awready( { dm_axi_m_resp.aw_ready, axi_ariane_resp.aw_ready }),
+  .s_axi_wdata  ( { dm_axi_m_req.w.data,    axi_ariane_req.w.data }),
+  .s_axi_wstrb  ( { dm_axi_m_req.w.strb,    axi_ariane_req.w.strb }),
+  .s_axi_wlast  ( { dm_axi_m_req.w.last,    axi_ariane_req.w.last }),
+  .s_axi_wvalid ( { dm_axi_m_req.w_valid,   axi_ariane_req.w_valid }),
+  .s_axi_wready ( { dm_axi_m_resp.w_ready,  axi_ariane_resp.w_ready }),
+  .s_axi_bid    ( { dm_axi_m_resp.b.id,     axi_ariane_resp.b.id }),
+  .s_axi_bresp  ( { dm_axi_m_resp.b.resp,   axi_ariane_resp.b.resp }),
+  .s_axi_bvalid ( { dm_axi_m_resp.b_valid,  axi_ariane_resp.b_valid }),
+  .s_axi_bready ( { dm_axi_m_req.b_ready,   axi_ariane_req.b_ready }),
+  .s_axi_arid   ( { dm_axi_m_req.ar.id,     axi_ariane_req.ar.id }),
+  .s_axi_araddr ( { dm_axi_m_req.ar.addr,   axi_ariane_req.ar.addr }),
+  .s_axi_arlen  ( { dm_axi_m_req.ar.len,    axi_ariane_req.ar.len }),
+  .s_axi_arsize ( { dm_axi_m_req.ar.size,   axi_ariane_req.ar.size }),
+  .s_axi_arburst( { dm_axi_m_req.ar.burst,  axi_ariane_req.ar.burst }),
+  .s_axi_arlock ( { dm_axi_m_req.ar.lock,   axi_ariane_req.ar.lock }),
+  .s_axi_arcache( { dm_axi_m_req.ar.cache,  axi_ariane_req.ar.cache }),
+  .s_axi_arprot ( { dm_axi_m_req.ar.prot,   axi_ariane_req.ar.prot }),
+  .s_axi_arqos  ( { dm_axi_m_req.ar.qos,    axi_ariane_req.ar.qos }),
+  .s_axi_arvalid( { dm_axi_m_req.ar_valid,  axi_ariane_req.ar_valid }),
+  .s_axi_arready( { dm_axi_m_resp.ar_ready, axi_ariane_resp.ar_ready }),
+  .s_axi_rid    ( { dm_axi_m_resp.r.id,     axi_ariane_resp.r.id }),
+  .s_axi_rdata  ( { dm_axi_m_resp.r.data,   axi_ariane_resp.r.data }),
+  .s_axi_rresp  ( { dm_axi_m_resp.r.resp,   axi_ariane_resp.r.resp }),
+  .s_axi_rlast  ( { dm_axi_m_resp.r.last,   axi_ariane_resp.r.last }),
+  .s_axi_rvalid ( { dm_axi_m_resp.r_valid,  axi_ariane_resp.r_valid }),
+  .s_axi_rready ( { dm_axi_m_req.r_ready,   axi_ariane_req.r_ready }),
+
+
+
+
+
+
+
+
+  .m_axi_arregion (),
+  .m_axi_awregion (),
+  .m_axi_awid   ( { axi_debug_req.aw.id,     axi_clint_req.aw.id,     axi_zynq_req.aw.id,     axi_dram_req.aw.id} ),
+  .m_axi_awaddr ( { axi_debug_req.aw.addr,   axi_clint_req.aw.addr,   axi_zynq_req.aw.addr,   axi_dram_req.aw.addr} ),
+  .m_axi_awlen  ( { axi_debug_req.aw.len,    axi_clint_req.aw.len,    axi_zynq_req.aw.len,    axi_dram_req.aw.len} ),
+  .m_axi_awsize ( { axi_debug_req.aw.size,   axi_clint_req.aw.size,   axi_zynq_req.aw.size,   axi_dram_req.aw.size} ),
+  .m_axi_awburst( { axi_debug_req.aw.burst,  axi_clint_req.aw.burst,  axi_zynq_req.aw.burst,  axi_dram_req.aw.burst} ),
+  .m_axi_awlock ( { axi_debug_req.aw.lock,   axi_clint_req.aw.lock,   axi_zynq_req.aw.lock,   axi_dram_req.aw.lock} ),
+  .m_axi_awcache( { axi_debug_req.aw.cache,  axi_clint_req.aw.cache,  axi_zynq_req.aw.cache,  axi_dram_req.aw.cache} ),
+  .m_axi_awprot ( { axi_debug_req.aw.prot,   axi_clint_req.aw.prot,   axi_zynq_req.aw.prot,   axi_dram_req.aw.prot} ),
+  .m_axi_awqos  ( { axi_debug_req.aw.qos,    axi_clint_req.aw.qos,    axi_zynq_req.aw.qos,    axi_dram_req.aw.qos} ),
+  .m_axi_awvalid( { axi_debug_req.aw_valid,  axi_clint_req.aw_valid,  axi_zynq_req.aw_valid,  axi_dram_req.aw_valid} ),
+  .m_axi_awready( { axi_debug_resp.aw_ready, axi_clint_resp.aw_ready, axi_zynq_resp.aw_ready, axi_dram_resp.aw_ready} ),
+  .m_axi_wdata  ( { axi_debug_req.w.data,    axi_clint_req.w.data,    axi_zynq_req.w.data,    axi_dram_req.w.data} ),
+  .m_axi_wstrb  ( { axi_debug_req.w.strb,    axi_clint_req.w.strb,    axi_zynq_req.w.strb,    axi_dram_req.w.strb} ),
+  .m_axi_wlast  ( { axi_debug_req.w.last,    axi_clint_req.w.last,    axi_zynq_req.w.last,    axi_dram_req.w.last} ),
+  .m_axi_wvalid ( { axi_debug_req.w_valid,   axi_clint_req.w_valid,   axi_zynq_req.w_valid,   axi_dram_req.w_valid} ),
+  .m_axi_wready ( { axi_debug_resp.w_ready,  axi_clint_resp.w_ready,  axi_zynq_resp.w_ready,  axi_dram_resp.w_ready} ),
+  .m_axi_bid    ( { axi_debug_resp.b.id,     axi_clint_resp.b.id,     axi_zynq_resp.b.id,     axi_dram_resp.b.id} ),
+  .m_axi_bresp  ( { axi_debug_resp.b.resp,   axi_clint_resp.b.resp,   axi_zynq_resp.b.resp,   axi_dram_resp.b.resp} ),
+  .m_axi_bvalid ( { axi_debug_resp.b_valid,  axi_clint_resp.b_valid,  axi_zynq_resp.b_valid,  axi_dram_resp.b_valid} ),
+  .m_axi_bready ( { axi_debug_req.b_ready,   axi_clint_req.b_ready,   axi_zynq_req.b_ready,   axi_dram_req.b_ready} ),
+  .m_axi_arid   ( { axi_debug_req.ar.id,     axi_clint_req.ar.id,     axi_zynq_req.ar.id,     axi_dram_req.ar.id} ),
+  .m_axi_araddr ( { axi_debug_req.ar.addr,   axi_clint_req.ar.addr,   axi_zynq_req.ar.addr,   axi_dram_req.ar.addr} ),
+  .m_axi_arlen  ( { axi_debug_req.ar.len,    axi_clint_req.ar.len,    axi_zynq_req.ar.len,    axi_dram_req.ar.len} ),
+  .m_axi_arsize ( { axi_debug_req.ar.size,   axi_clint_req.ar.size,   axi_zynq_req.ar.size,   axi_dram_req.ar.size} ),
+  .m_axi_arburst( { axi_debug_req.ar.burst,  axi_clint_req.ar.burst,  axi_zynq_req.ar.burst,  axi_dram_req.ar.burst} ),
+  .m_axi_arlock ( { axi_debug_req.ar.lock,   axi_clint_req.ar.lock,   axi_zynq_req.ar.lock,   axi_dram_req.ar.lock} ),
+  .m_axi_arcache( { axi_debug_req.ar.cache,  axi_clint_req.ar.cache,  axi_zynq_req.ar.cache,  axi_dram_req.ar.cache} ),
+  .m_axi_arprot ( { axi_debug_req.ar.prot,   axi_clint_req.ar.prot,   axi_zynq_req.ar.prot,   axi_dram_req.ar.prot} ),
+  .m_axi_arqos  ( { axi_debug_req.ar.qos,    axi_clint_req.ar.qos,    axi_zynq_req.ar.qos,    axi_dram_req.ar.qos} ),
+  .m_axi_arvalid( { axi_debug_req.ar_valid,  axi_clint_req.ar_valid,  axi_zynq_req.ar_valid,  axi_dram_req.ar_valid} ),
+  .m_axi_arready( { axi_debug_resp.ar_ready, axi_clint_resp.ar_ready, axi_zynq_resp.ar_ready, axi_dram_resp.ar_ready} ),
+  .m_axi_rid    ( { axi_debug_resp.r.id,     axi_clint_resp.r.id,     axi_zynq_resp.r.id,     axi_dram_resp.r.id} ),
+  .m_axi_rdata  ( { axi_debug_resp.r.data,   axi_clint_resp.r.data,   axi_zynq_resp.r.data,   axi_dram_resp.r.data} ),
+  .m_axi_rresp  ( { axi_debug_resp.r.resp,   axi_clint_resp.r.resp,   axi_zynq_resp.r.resp,   axi_dram_resp.r.resp} ),
+  .m_axi_rlast  ( { axi_debug_resp.r.last,   axi_clint_resp.r.last,   axi_zynq_resp.r.last,   axi_dram_resp.r.last} ),
+  .m_axi_rvalid ( { axi_debug_resp.r_valid,  axi_clint_resp.r_valid,  axi_zynq_resp.r_valid,  axi_dram_resp.r_valid} ),
+  .m_axi_rready ( { axi_debug_req.r_ready,   axi_clint_req.r_ready,   axi_zynq_req.r_ready,   axi_dram_req.r_ready} )
+);
 
 
 

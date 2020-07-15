@@ -26,10 +26,8 @@ package ariane_soc;
   typedef enum int unsigned {
     DRAM     = 0,
     ZYNQ     = 1,
-    PLIC     = 2,
-    CLINT    = 3,
-    ROM      = 4,
-    Debug    = 5
+    CLINT    = 2,
+    Debug    = 3
   } axi_slaves_t;
 
   localparam NB_PERIPHERALS = Debug + 1;
@@ -38,8 +36,7 @@ package ariane_soc;
   localparam logic[63:0] DebugLength    = 64'h1000;
   localparam logic[63:0] ROMLength      = 64'h10000;
   localparam logic[63:0] CLINTLength    = 64'hC0000;
-  localparam logic[63:0] PLICLength     = 64'h3FF_FFFF;
-
+  // localparam logic[63:0] PLICLength     = 64'h3FF_FFFF;
   localparam logic[63:0] ZYNQLength     = 64'h2000_0000;
   // localparam logic[63:0] UARTLength     = 64'h1000;
   // localparam logic[63:0] TimerLength    = 64'h1000;
@@ -53,9 +50,9 @@ package ariane_soc;
 
   typedef enum logic [63:0] {
     DebugBase    = 64'h0000_0000,
-    ROMBase      = 64'h0001_0000,
+    ROMBase      = 64'hfc00_0000,
     CLINTBase    = 64'h0200_0000,
-    PLICBase     = 64'h0C00_0000,
+    // PLICBase     = 64'h0C00_0000,
     ZYNQBase     = 64'hE000_0000,
     // UARTBase     = 64'h1000_0000,
     // TimerBase    = 64'h1800_0000,
