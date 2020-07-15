@@ -51,8 +51,10 @@ localparam NumWords = (24 * 1024 * 1024) / 8;
 localparam NBSlave = 2; // debug, ariane
 localparam AxiAddrWidth = 64;
 localparam AxiDataWidth = 64;
+
 localparam AxiIdWidthMaster = 4;
 localparam AxiIdWidthSlaves = AxiIdWidthMaster + $clog2(NBSlave); // 5
+localparam AxiIdWidth   = AxiIdWidthSlaves;
 localparam AxiUserWidth = 1;
 
 AXI_BUS #(
@@ -282,7 +284,152 @@ clint #(
     .ipi_o       ( ipi            )
 );
 
+
+ariane_axi::req_t    axi_plic_req;
+ariane_axi::resp_t   axi_plic_resp;
+
+
+
+    // ---------------
+    // 1. PLIC
+    // ---------------
+    logic [ariane_soc::NumSources-1:0] irq_sources;
+
+    logic uart_irq;
+    logic gpio_irq;
+
+    assign irq_sources = {{(ariane_soc::NumSources-2){1'd0}}, uart_irq, gpio_irq};
+
+    REG_BUS #(
+        .ADDR_WIDTH ( 32 ),
+        .DATA_WIDTH ( 32 )
+    ) reg_bus (sys_clk);
+
+    logic         plic_penable;
+    logic         plic_pwrite;
+    logic [31:0]  plic_paddr;
+    logic         plic_psel;
+    logic [31:0]  plic_pwdata;
+    logic [31:0]  plic_prdata;
+    logic         plic_pready;
+    logic         plic_pslverr;
+
+
+
+    axi2apb_64_32 #(
+        .AXI4_ADDRESS_WIDTH ( AxiAddrWidth  ),
+        .AXI4_RDATA_WIDTH   ( AxiDataWidth  ),
+        .AXI4_WDATA_WIDTH   ( AxiDataWidth  ),
+        .AXI4_ID_WIDTH      ( AxiIdWidth    ),
+        .AXI4_USER_WIDTH    ( AxiUserWidth  ),
+        .BUFF_DEPTH_SLAVE   ( 2             ),
+        .APB_ADDR_WIDTH     ( 32            )
+    ) i_axi2apb_64_32_plic (
+        .ACLK      ( sys_clk          ),
+        .ARESETn   ( ndmreset_n         ),
+        .test_en_i ( 1'b0           ),
+        .AWID_i    ( axi_plic_req.aw.id     ),
+        .AWADDR_i  ( axi_plic_req.aw.addr   ),
+        .AWLEN_i   ( axi_plic_req.aw.len    ),
+        .AWSIZE_i  ( axi_plic_req.aw.size   ),
+        .AWBURST_i ( axi_plic_req.aw.burst  ),
+        .AWLOCK_i  ( axi_plic_req.aw.lock   ),
+        .AWCACHE_i ( axi_plic_req.aw.cache  ),
+        .AWPROT_i  ( axi_plic_req.aw.prot   ),
+        .AWREGION_i( axi_plic_req.aw.region ),
+        // .AWUSER_i  ( plic_req.aw.user   ),
+        .AWQOS_i   ( axi_plic_req.aw.qos    ),
+        .AWVALID_i ( axi_plic_req.aw_valid  ),
+        .AWREADY_o ( axi_plic_resp.aw_ready  ),
+        .WDATA_i   ( axi_plic_req.w.data    ),
+        .WSTRB_i   ( axi_plic_req.w.strb    ),
+        .WLAST_i   ( axi_plic_req.w.last    ),
+        // .WUSER_i   ( plic.w.user    ),
+        .WVALID_i  ( axi_plic_req.w_valid   ),
+        .WREADY_o  ( axi_plic_resp.w_ready   ),
+        .BID_o     ( axi_plic_resp.b.id      ),
+        .BRESP_o   ( axi_plic_resp.b.resp    ),
+        .BVALID_o  ( axi_plic_resp.b_valid   ),
+        // .BUSER_o   ( axi_plic_resp.b.user    ),
+        .BREADY_i  ( axi_plic_req.b_ready   ),
+        .ARID_i    ( axi_plic_req.ar.id     ),
+        .ARADDR_i  ( axi_plic_req.ar.addr   ),
+        .ARLEN_i   ( axi_plic_req.ar.len    ),
+        .ARSIZE_i  ( axi_plic_req.ar.size   ),
+        .ARBURST_i ( axi_plic_req.ar.burst  ),
+        .ARLOCK_i  ( axi_plic_req.ar.lock   ),
+        .ARCACHE_i ( axi_plic_req.ar.cache  ),
+        .ARPROT_i  ( axi_plic_req.ar.prot   ),
+        .ARREGION_i( axi_plic_req.ar.region ),
+        // .ARUSER_i  ( plic.ar.user   ),
+        .ARQOS_i   ( axi_plic_req.ar.qos    ),
+        .ARVALID_i ( axi_plic_req.ar_valid  ),
+        .ARREADY_o ( axi_plic_resp.ar_ready  ),
+        .RID_o     ( axi_plic_resp.r.id      ),
+        .RDATA_o   ( axi_plic_resp.r.data    ),
+        .RRESP_o   ( axi_plic_resp.r.resp    ),
+        .RLAST_o   ( axi_plic_resp.r.last    ),
+        // .RUSER_o   ( plic.r.user    ),
+        .RVALID_o  ( axi_plic_resp.r_valid   ),
+        .RREADY_i  ( axi_plic_req.r_ready   ),
+
+
+        .PENABLE   ( plic_penable   ),
+        .PWRITE    ( plic_pwrite    ),
+        .PADDR     ( plic_paddr     ),
+        .PSEL      ( plic_psel      ),
+        .PWDATA    ( plic_pwdata    ),
+        .PRDATA    ( plic_prdata    ),
+        .PREADY    ( plic_pready    ),
+        .PSLVERR   ( plic_pslverr   )
+    );
+
+    apb_to_reg i_apb_to_reg (
+        .clk_i     ( sys_clk        ),
+        .rst_ni    ( ndmreset_n       ),
+        .penable_i ( plic_penable ),
+        .pwrite_i  ( plic_pwrite  ),
+        .paddr_i   ( plic_paddr   ),
+        .psel_i    ( plic_psel    ),
+        .pwdata_i  ( plic_pwdata  ),
+        .prdata_o  ( plic_prdata  ),
+        .pready_o  ( plic_pready  ),
+        .pslverr_o ( plic_pslverr ),
+        .reg_o     ( reg_bus      )
+    );
+
+    reg_intf::reg_intf_resp_d32 plic_resp;
+    reg_intf::reg_intf_req_a32_d32 plic_req;
+
+    assign plic_req.addr  = reg_bus.addr;
+    assign plic_req.write = reg_bus.write;
+    assign plic_req.wdata = reg_bus.wdata;
+    assign plic_req.wstrb = reg_bus.wstrb;
+    assign plic_req.valid = reg_bus.valid;
+
+    assign reg_bus.rdata = plic_resp.rdata;
+    assign reg_bus.error = plic_resp.error;
+    assign reg_bus.ready = plic_resp.ready;
+
+    plic_top #(
+      .N_SOURCE    ( ariane_soc::NumSources  ),
+      .N_TARGET    ( ariane_soc::NumTargets  ),
+      .MAX_PRIO    ( ariane_soc::MaxPriority )
+    ) i_plic (
+      .clk_i(sys_clk),
+      .rst_ni(ndmreset_n),
+      .req_i         ( plic_req    ),
+      .resp_o        ( plic_resp   ),
+      .le_i          ( '0          ), // 0:level 1:edge
+      .irq_sources_i ( irq_sources ),
+      .eip_targets_o ( irq       )
+    );
+
 // axi_slave_connect i_axi_slave_connect_clint (.axi_req_o(axi_clint_req), .axi_resp_i(axi_clint_resp), .slave(master[ariane_soc::CLINT]));
+
+
+
+
 
 
 
@@ -337,6 +484,9 @@ xilinx_ariane_wrapper i_xilinx_ariane_wrapper
 
     .peripheral_aresetn(rst_n),
     .FCLK_CLK0(sys_clk),
+
+    .IRQ_P2F_GPIO(),
+    .IRQ_P2F_UART1(),
 
     .FIXED_IO_ddr_vrn(FIXED_IO_ddr_vrn),
     .FIXED_IO_ddr_vrp(FIXED_IO_ddr_vrp),
@@ -544,43 +694,43 @@ axi_crossbar i_axi_crossbar
 
   .m_axi_arregion (),
   .m_axi_awregion (),
-  .m_axi_awid   ( { axi_debug_req.aw.id,     axi_clint_req.aw.id,     axi_zynq_req.aw.id,     axi_dram_req.aw.id} ),
-  .m_axi_awaddr ( { axi_debug_req.aw.addr,   axi_clint_req.aw.addr,   axi_zynq_req.aw.addr,   axi_dram_req.aw.addr} ),
-  .m_axi_awlen  ( { axi_debug_req.aw.len,    axi_clint_req.aw.len,    axi_zynq_req.aw.len,    axi_dram_req.aw.len} ),
-  .m_axi_awsize ( { axi_debug_req.aw.size,   axi_clint_req.aw.size,   axi_zynq_req.aw.size,   axi_dram_req.aw.size} ),
-  .m_axi_awburst( { axi_debug_req.aw.burst,  axi_clint_req.aw.burst,  axi_zynq_req.aw.burst,  axi_dram_req.aw.burst} ),
-  .m_axi_awlock ( { axi_debug_req.aw.lock,   axi_clint_req.aw.lock,   axi_zynq_req.aw.lock,   axi_dram_req.aw.lock} ),
-  .m_axi_awcache( { axi_debug_req.aw.cache,  axi_clint_req.aw.cache,  axi_zynq_req.aw.cache,  axi_dram_req.aw.cache} ),
-  .m_axi_awprot ( { axi_debug_req.aw.prot,   axi_clint_req.aw.prot,   axi_zynq_req.aw.prot,   axi_dram_req.aw.prot} ),
-  .m_axi_awqos  ( { axi_debug_req.aw.qos,    axi_clint_req.aw.qos,    axi_zynq_req.aw.qos,    axi_dram_req.aw.qos} ),
-  .m_axi_awvalid( { axi_debug_req.aw_valid,  axi_clint_req.aw_valid,  axi_zynq_req.aw_valid,  axi_dram_req.aw_valid} ),
-  .m_axi_awready( { axi_debug_resp.aw_ready, axi_clint_resp.aw_ready, axi_zynq_resp.aw_ready, axi_dram_resp.aw_ready} ),
-  .m_axi_wdata  ( { axi_debug_req.w.data,    axi_clint_req.w.data,    axi_zynq_req.w.data,    axi_dram_req.w.data} ),
-  .m_axi_wstrb  ( { axi_debug_req.w.strb,    axi_clint_req.w.strb,    axi_zynq_req.w.strb,    axi_dram_req.w.strb} ),
-  .m_axi_wlast  ( { axi_debug_req.w.last,    axi_clint_req.w.last,    axi_zynq_req.w.last,    axi_dram_req.w.last} ),
-  .m_axi_wvalid ( { axi_debug_req.w_valid,   axi_clint_req.w_valid,   axi_zynq_req.w_valid,   axi_dram_req.w_valid} ),
-  .m_axi_wready ( { axi_debug_resp.w_ready,  axi_clint_resp.w_ready,  axi_zynq_resp.w_ready,  axi_dram_resp.w_ready} ),
-  .m_axi_bid    ( { axi_debug_resp.b.id,     axi_clint_resp.b.id,     axi_zynq_resp.b.id,     axi_dram_resp.b.id} ),
-  .m_axi_bresp  ( { axi_debug_resp.b.resp,   axi_clint_resp.b.resp,   axi_zynq_resp.b.resp,   axi_dram_resp.b.resp} ),
-  .m_axi_bvalid ( { axi_debug_resp.b_valid,  axi_clint_resp.b_valid,  axi_zynq_resp.b_valid,  axi_dram_resp.b_valid} ),
-  .m_axi_bready ( { axi_debug_req.b_ready,   axi_clint_req.b_ready,   axi_zynq_req.b_ready,   axi_dram_req.b_ready} ),
-  .m_axi_arid   ( { axi_debug_req.ar.id,     axi_clint_req.ar.id,     axi_zynq_req.ar.id,     axi_dram_req.ar.id} ),
-  .m_axi_araddr ( { axi_debug_req.ar.addr,   axi_clint_req.ar.addr,   axi_zynq_req.ar.addr,   axi_dram_req.ar.addr} ),
-  .m_axi_arlen  ( { axi_debug_req.ar.len,    axi_clint_req.ar.len,    axi_zynq_req.ar.len,    axi_dram_req.ar.len} ),
-  .m_axi_arsize ( { axi_debug_req.ar.size,   axi_clint_req.ar.size,   axi_zynq_req.ar.size,   axi_dram_req.ar.size} ),
-  .m_axi_arburst( { axi_debug_req.ar.burst,  axi_clint_req.ar.burst,  axi_zynq_req.ar.burst,  axi_dram_req.ar.burst} ),
-  .m_axi_arlock ( { axi_debug_req.ar.lock,   axi_clint_req.ar.lock,   axi_zynq_req.ar.lock,   axi_dram_req.ar.lock} ),
-  .m_axi_arcache( { axi_debug_req.ar.cache,  axi_clint_req.ar.cache,  axi_zynq_req.ar.cache,  axi_dram_req.ar.cache} ),
-  .m_axi_arprot ( { axi_debug_req.ar.prot,   axi_clint_req.ar.prot,   axi_zynq_req.ar.prot,   axi_dram_req.ar.prot} ),
-  .m_axi_arqos  ( { axi_debug_req.ar.qos,    axi_clint_req.ar.qos,    axi_zynq_req.ar.qos,    axi_dram_req.ar.qos} ),
-  .m_axi_arvalid( { axi_debug_req.ar_valid,  axi_clint_req.ar_valid,  axi_zynq_req.ar_valid,  axi_dram_req.ar_valid} ),
-  .m_axi_arready( { axi_debug_resp.ar_ready, axi_clint_resp.ar_ready, axi_zynq_resp.ar_ready, axi_dram_resp.ar_ready} ),
-  .m_axi_rid    ( { axi_debug_resp.r.id,     axi_clint_resp.r.id,     axi_zynq_resp.r.id,     axi_dram_resp.r.id} ),
-  .m_axi_rdata  ( { axi_debug_resp.r.data,   axi_clint_resp.r.data,   axi_zynq_resp.r.data,   axi_dram_resp.r.data} ),
-  .m_axi_rresp  ( { axi_debug_resp.r.resp,   axi_clint_resp.r.resp,   axi_zynq_resp.r.resp,   axi_dram_resp.r.resp} ),
-  .m_axi_rlast  ( { axi_debug_resp.r.last,   axi_clint_resp.r.last,   axi_zynq_resp.r.last,   axi_dram_resp.r.last} ),
-  .m_axi_rvalid ( { axi_debug_resp.r_valid,  axi_clint_resp.r_valid,  axi_zynq_resp.r_valid,  axi_dram_resp.r_valid} ),
-  .m_axi_rready ( { axi_debug_req.r_ready,   axi_clint_req.r_ready,   axi_zynq_req.r_ready,   axi_dram_req.r_ready} )
+  .m_axi_awid   ( { axi_debug_req.aw.id,     axi_clint_req.aw.id,     axi_plic_req.aw.id,     axi_zynq_req.aw.id,     axi_dram_req.aw.id} ),
+  .m_axi_awaddr ( { axi_debug_req.aw.addr,   axi_clint_req.aw.addr,   axi_plic_req.aw.addr,   axi_zynq_req.aw.addr,   axi_dram_req.aw.addr} ),
+  .m_axi_awlen  ( { axi_debug_req.aw.len,    axi_clint_req.aw.len,    axi_plic_req.aw.len,    axi_zynq_req.aw.len,    axi_dram_req.aw.len} ),
+  .m_axi_awsize ( { axi_debug_req.aw.size,   axi_clint_req.aw.size,   axi_plic_req.aw.size,   axi_zynq_req.aw.size,   axi_dram_req.aw.size} ),
+  .m_axi_awburst( { axi_debug_req.aw.burst,  axi_clint_req.aw.burst,  axi_plic_req.aw.burst,  axi_zynq_req.aw.burst,  axi_dram_req.aw.burst} ),
+  .m_axi_awlock ( { axi_debug_req.aw.lock,   axi_clint_req.aw.lock,   axi_plic_req.aw.lock,   axi_zynq_req.aw.lock,   axi_dram_req.aw.lock} ),
+  .m_axi_awcache( { axi_debug_req.aw.cache,  axi_clint_req.aw.cache,  axi_plic_req.aw.cache,  axi_zynq_req.aw.cache,  axi_dram_req.aw.cache} ),
+  .m_axi_awprot ( { axi_debug_req.aw.prot,   axi_clint_req.aw.prot,   axi_plic_req.aw.prot,   axi_zynq_req.aw.prot,   axi_dram_req.aw.prot} ),
+  .m_axi_awqos  ( { axi_debug_req.aw.qos,    axi_clint_req.aw.qos,    axi_plic_req.aw.qos,    axi_zynq_req.aw.qos,    axi_dram_req.aw.qos} ),
+  .m_axi_awvalid( { axi_debug_req.aw_valid,  axi_clint_req.aw_valid,  axi_plic_req.aw_valid,  axi_zynq_req.aw_valid,  axi_dram_req.aw_valid} ),
+  .m_axi_awready( { axi_debug_resp.aw_ready, axi_clint_resp.aw_ready, axi_plic_resp.aw_ready, axi_zynq_resp.aw_ready, axi_dram_resp.aw_ready} ),
+  .m_axi_wdata  ( { axi_debug_req.w.data,    axi_clint_req.w.data,    axi_plic_req.w.data,    axi_zynq_req.w.data,    axi_dram_req.w.data} ),
+  .m_axi_wstrb  ( { axi_debug_req.w.strb,    axi_clint_req.w.strb,    axi_plic_req.w.strb,    axi_zynq_req.w.strb,    axi_dram_req.w.strb} ),
+  .m_axi_wlast  ( { axi_debug_req.w.last,    axi_clint_req.w.last,    axi_plic_req.w.last,    axi_zynq_req.w.last,    axi_dram_req.w.last} ),
+  .m_axi_wvalid ( { axi_debug_req.w_valid,   axi_clint_req.w_valid,   axi_plic_req.w_valid,   axi_zynq_req.w_valid,   axi_dram_req.w_valid} ),
+  .m_axi_wready ( { axi_debug_resp.w_ready,  axi_clint_resp.w_ready,  axi_plic_resp.w_ready,  axi_zynq_resp.w_ready,  axi_dram_resp.w_ready} ),
+  .m_axi_bid    ( { axi_debug_resp.b.id,     axi_clint_resp.b.id,     axi_plic_resp.b.id,     axi_zynq_resp.b.id,     axi_dram_resp.b.id} ),
+  .m_axi_bresp  ( { axi_debug_resp.b.resp,   axi_clint_resp.b.resp,   axi_plic_resp.b.resp,   axi_zynq_resp.b.resp,   axi_dram_resp.b.resp} ),
+  .m_axi_bvalid ( { axi_debug_resp.b_valid,  axi_clint_resp.b_valid,  axi_plic_resp.b_valid,  axi_zynq_resp.b_valid,  axi_dram_resp.b_valid} ),
+  .m_axi_bready ( { axi_debug_req.b_ready,   axi_clint_req.b_ready,   axi_plic_req.b_ready,   axi_zynq_req.b_ready,   axi_dram_req.b_ready} ),
+  .m_axi_arid   ( { axi_debug_req.ar.id,     axi_clint_req.ar.id,     axi_plic_req.ar.id,     axi_zynq_req.ar.id,     axi_dram_req.ar.id} ),
+  .m_axi_araddr ( { axi_debug_req.ar.addr,   axi_clint_req.ar.addr,   axi_plic_req.ar.addr,   axi_zynq_req.ar.addr,   axi_dram_req.ar.addr} ),
+  .m_axi_arlen  ( { axi_debug_req.ar.len,    axi_clint_req.ar.len,    axi_plic_req.ar.len,    axi_zynq_req.ar.len,    axi_dram_req.ar.len} ),
+  .m_axi_arsize ( { axi_debug_req.ar.size,   axi_clint_req.ar.size,   axi_plic_req.ar.size,   axi_zynq_req.ar.size,   axi_dram_req.ar.size} ),
+  .m_axi_arburst( { axi_debug_req.ar.burst,  axi_clint_req.ar.burst,  axi_plic_req.ar.burst,  axi_zynq_req.ar.burst,  axi_dram_req.ar.burst} ),
+  .m_axi_arlock ( { axi_debug_req.ar.lock,   axi_clint_req.ar.lock,   axi_plic_req.ar.lock,   axi_zynq_req.ar.lock,   axi_dram_req.ar.lock} ),
+  .m_axi_arcache( { axi_debug_req.ar.cache,  axi_clint_req.ar.cache,  axi_plic_req.ar.cache,  axi_zynq_req.ar.cache,  axi_dram_req.ar.cache} ),
+  .m_axi_arprot ( { axi_debug_req.ar.prot,   axi_clint_req.ar.prot,   axi_plic_req.ar.prot,   axi_zynq_req.ar.prot,   axi_dram_req.ar.prot} ),
+  .m_axi_arqos  ( { axi_debug_req.ar.qos,    axi_clint_req.ar.qos,    axi_plic_req.ar.qos,    axi_zynq_req.ar.qos,    axi_dram_req.ar.qos} ),
+  .m_axi_arvalid( { axi_debug_req.ar_valid,  axi_clint_req.ar_valid,  axi_plic_req.ar_valid,  axi_zynq_req.ar_valid,  axi_dram_req.ar_valid} ),
+  .m_axi_arready( { axi_debug_resp.ar_ready, axi_clint_resp.ar_ready, axi_plic_resp.ar_ready, axi_zynq_resp.ar_ready, axi_dram_resp.ar_ready} ),
+  .m_axi_rid    ( { axi_debug_resp.r.id,     axi_clint_resp.r.id,     axi_plic_resp.r.id,     axi_zynq_resp.r.id,     axi_dram_resp.r.id} ),
+  .m_axi_rdata  ( { axi_debug_resp.r.data,   axi_clint_resp.r.data,   axi_plic_resp.r.data,   axi_zynq_resp.r.data,   axi_dram_resp.r.data} ),
+  .m_axi_rresp  ( { axi_debug_resp.r.resp,   axi_clint_resp.r.resp,   axi_plic_resp.r.resp,   axi_zynq_resp.r.resp,   axi_dram_resp.r.resp} ),
+  .m_axi_rlast  ( { axi_debug_resp.r.last,   axi_clint_resp.r.last,   axi_plic_resp.r.last,   axi_zynq_resp.r.last,   axi_dram_resp.r.last} ),
+  .m_axi_rvalid ( { axi_debug_resp.r_valid,  axi_clint_resp.r_valid,  axi_plic_resp.r_valid,  axi_zynq_resp.r_valid,  axi_dram_resp.r_valid} ),
+  .m_axi_rready ( { axi_debug_req.r_ready,   axi_clint_req.r_ready,   axi_plic_req.r_ready,   axi_zynq_req.r_ready,   axi_dram_req.r_ready} )
 );
 
 
