@@ -268,6 +268,9 @@ ariane #(
 ariane_axi::req_t    axi_clint_req;
 ariane_axi::resp_t   axi_clint_resp;
 
+logic rtc;
+
+
 clint #(
     .AXI_ADDR_WIDTH ( AxiAddrWidth     ),
     .AXI_DATA_WIDTH ( AxiDataWidth     ),
@@ -279,10 +282,29 @@ clint #(
     .testmode_i  ( test_en        ),
     .axi_req_i   ( axi_clint_req  ),
     .axi_resp_o  ( axi_clint_resp ),
-    .rtc_i       ( sys_clk  ),
+    .rtc_i       ( rtc  ),
     .timer_irq_o ( timer_irq      ),
     .ipi_o       ( ipi            )
 );
+
+
+
+
+// ---------------
+// CLINT
+// ---------------
+// divide clock by two
+always_ff @(posedge sys_clk or negedge ndmreset_n) begin
+  if (~ndmreset_n) begin
+    rtc <= 0;
+  end else begin
+    rtc <= rtc ^ 1'b1;
+  end
+end
+
+
+
+
 
 
 ariane_axi::req_t    axi_plic_req;
