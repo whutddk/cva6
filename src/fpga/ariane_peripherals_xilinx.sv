@@ -555,23 +555,13 @@ module ariane_peripherals #(
        .phy_int_n(eth_int_n),
        .phy_pme_n(eth_pme_n),
        .phy_mdc(eth_mdc),
-       .phy_mdio_i(eth_mdio_i),
-       .phy_mdio_o(eth_mdio_o),
-       .phy_mdio_oe(eth_mdio_oe),
+       .phy_mdio_i(),
+       .phy_mdio_o(),
+       .phy_mdio_oe(),
        .eth_irq(irq_sources[2])
     );
 
-       IOBUF #(
-          .DRIVE(12), // Specify the output drive strength
-          .IBUF_LOW_PWR("TRUE"),  // Low Power - "TRUE", High Performance = "FALSE"
-          .IOSTANDARD("DEFAULT"), // Specify the I/O standard
-          .SLEW("SLOW") // Specify the output slew rate
-       ) IOBUF_inst (
-          .O(eth_mdio_i),     // Buffer output
-          .IO(eth_mdio),   // Buffer inout port (connect directly to top-level port)
-          .I(eth_mdio_o),     // Buffer input
-          .T(~eth_mdio_oe)      // 3-state enable input, high=input, low=output
-       );
+
 
     end else begin
         assign irq_sources [2] = 1'b0;

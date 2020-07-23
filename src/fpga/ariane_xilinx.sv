@@ -20,6 +20,7 @@ module ariane_xilinx (
   output logic [ 7:0]  led         ,
   input  logic [ 7:0]  sw          ,
 
+
   // common part
   // input logic      trst_n      ,
   input  logic        tck         ,
@@ -379,6 +380,10 @@ bootrom i_bootrom (
 // Peripherals
 // ---------------
 
+logic eth_clk;
+logic phy_tx_clk;
+logic sd_clk_sys;
+logic ddr_clock_out;
 
 ariane_peripherals #(
     .AxiAddrWidth ( AxiAddrWidth     ),
@@ -388,24 +393,39 @@ ariane_peripherals #(
     .InclUART     ( 1'b1             ),
     .InclGPIO     ( 1'b1             ),
 
-    .InclSPI      ( 1'b0         ),
+    .InclSPI      ( 1'b1         ),
     .InclEthernet ( 1'b0         )
 
 ) i_ariane_peripherals (
     .clk_i        ( clk                          ),
-    .clk_200MHz_i (                 ),
+    .clk_200MHz_i (             ddr_clock_out    ),
     .rst_ni       ( ndmreset_n                   ),
     .plic         ( master[ariane_soc::PLIC]     ),
     .uart         ( master[ariane_soc::UART]     ),
     .spi          ( master[ariane_soc::SPI]      ),
     .gpio         ( master[ariane_soc::GPIO]     ),
+    .eth_clk_i    ( eth_clk                      ),
     .ethernet     ( master[ariane_soc::Ethernet] ),
     .timer        ( master[ariane_soc::Timer]    ),
     .irq_o        ( irq                          ),
     .rx_i         ( rx                           ),
     .tx_o         ( tx                           ),
 
-
+    .eth_txck(),
+    .eth_rxck(),
+    .eth_rxctl(),
+    .eth_rxd(),
+    .eth_rst_n(),
+    .eth_txctl(),
+    .eth_txd(),
+    .eth_mdio(),
+    .eth_mdc(),
+    .phy_tx_clk_i   ( phy_tx_clk                  ),
+    .sd_clk_i       ( sd_clk_sys                  ),
+    .spi_clk_o      (),
+    .spi_mosi       (),
+    .spi_miso       (),
+    .spi_ss         (),
 
       .leds_o         ( led                       ),
       .dip_switches_i ( sw                        )
@@ -488,6 +508,10 @@ assign dram.b_user = '0;
 
 xlnx_clk_gen i_xlnx_clk_gen (
   .clk_out1 ( clk           ), // 50 MHz
+  .clk_out2 ( phy_tx_clk    ), // 125 MHz (for RGMII PHY)
+  .clk_out3 ( eth_clk       ), // 125 MHz quadrature (90 deg phase shift)
+  .clk_out4 ( sd_clk_sys    ), // 50 MHz clock
+  .clk_out5(ddr_clock_out),
   .clk_in1  ( sys_clk )
 );
 
