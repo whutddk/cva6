@@ -304,7 +304,7 @@ ariane #(
 ) i_ariane (
     .clk_i        ( clk                 ),
     .rst_ni       ( ndmreset_n          ),
-    .boot_addr_i  ( ariane_soc::ROMBase ), // start fetching from ROM
+    .boot_addr_i  ( ariane_soc::DRAMBase ), // start fetching from ROM
     .hart_id_i    ( '0                  ),
     .irq_i        ( irq                 ),
     .ipi_i        ( ipi                 ),
@@ -350,33 +350,6 @@ clint #(
 axi_slave_connect i_axi_slave_connect_clint (.axi_req_o(axi_clint_req), .axi_resp_i(axi_clint_resp), .slave(master[ariane_soc::CLINT]));
 
 // ---------------
-// ROM
-// ---------------
-axi2mem #(
-    .AXI_ID_WIDTH   ( AxiIdWidthSlaves ),
-    .AXI_ADDR_WIDTH ( AxiAddrWidth     ),
-    .AXI_DATA_WIDTH ( AxiDataWidth     ),
-    .AXI_USER_WIDTH ( AxiUserWidth     )
-) i_axi2rom (
-    .clk_i  ( clk                     ),
-    .rst_ni ( ndmreset_n              ),
-    .slave  ( master[ariane_soc::ROM] ),
-    .req_o  ( rom_req                 ),
-    .we_o   (                         ),
-    .addr_o ( rom_addr                ),
-    .be_o   (                         ),
-    .data_o (                         ),
-    .data_i ( rom_rdata               )
-);
-
-bootrom i_bootrom (
-    .clk_i   ( clk       ),
-    .req_i   ( rom_req   ),
-    .addr_i  ( rom_addr  ),
-    .rdata_o ( rom_rdata )
-);
-
-// ---------------
 // Peripherals
 // ---------------
 
@@ -393,7 +366,7 @@ ariane_peripherals #(
     .InclUART     ( 1'b1             ),
     .InclGPIO     ( 1'b1             ),
 
-    .InclSPI      ( 1'b1         ),
+    .InclSPI      ( 1'b0         ),
     .InclEthernet ( 1'b0         )
 
 ) i_ariane_peripherals (
