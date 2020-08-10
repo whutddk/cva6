@@ -3,8 +3,8 @@ module ariane_Soc_Wrap (
 	input sys_clk,
 	input RSTn,
 
-	output led,
-	input sw,
+	output [7:0] led,
+	input [7:0] sw,
 
 	// common part
 	// input trst_n,
