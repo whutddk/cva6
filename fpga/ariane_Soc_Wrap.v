@@ -6,7 +6,7 @@ module ariane_Soc_Wrap (
 	output [7:0] led,
 	input [7:0] sw,
 
-
+(* X_INTERFACE_PARAMETER = "FREQ_HZ 30000000" *)
 	output wire [3 : 0] MEM_AXI_AWID,
 	output wire [63 : 0] MEM_AXI_AWADDR,
 	output wire [7 : 0] MEM_AXI_AWLEN,

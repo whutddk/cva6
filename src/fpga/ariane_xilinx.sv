@@ -112,11 +112,6 @@ logic rtc;
 
 
 
-// ROM
-logic                    rom_req;
-logic [AxiAddrWidth-1:0] rom_addr;
-logic [AxiDataWidth-1:0] rom_rdata;
-
 // Debug
 logic          debug_req_valid;
 logic          debug_req_ready;
@@ -158,25 +153,25 @@ axi_node_wrap_with_slices #(
 	.master       ( master     ),
 	.start_addr_i ({
 		ariane_soc::DebugBase,
-		ariane_soc::ROMBase,
+		// ariane_soc::ROMBase,
 		ariane_soc::CLINTBase,
 		ariane_soc::PLICBase,
 		ariane_soc::UARTBase,
 		ariane_soc::TimerBase,
-		ariane_soc::SPIBase,
-		ariane_soc::EthernetBase,
+		// ariane_soc::SPIBase,
+		// ariane_soc::EthernetBase,
 		ariane_soc::GPIOBase,
 		ariane_soc::DRAMBase
 	}),
 	.end_addr_i   ({
 		ariane_soc::DebugBase    + ariane_soc::DebugLength - 1,
-		ariane_soc::ROMBase      + ariane_soc::ROMLength - 1,
+		// ariane_soc::ROMBase      + ariane_soc::ROMLength - 1,
 		ariane_soc::CLINTBase    + ariane_soc::CLINTLength - 1,
 		ariane_soc::PLICBase     + ariane_soc::PLICLength - 1,
 		ariane_soc::UARTBase     + ariane_soc::UARTLength - 1,
 		ariane_soc::TimerBase    + ariane_soc::TimerLength - 1,
-		ariane_soc::SPIBase      + ariane_soc::SPILength - 1,
-		ariane_soc::EthernetBase + ariane_soc::EthernetLength -1,
+		// ariane_soc::SPIBase      + ariane_soc::SPILength - 1,
+		// ariane_soc::EthernetBase + ariane_soc::EthernetLength -1,
 		ariane_soc::GPIOBase     + ariane_soc::GPIOLength - 1,
 		ariane_soc::DRAMBase     + ariane_soc::DRAMLength - 1
 	}),
@@ -319,7 +314,7 @@ ariane #(
 ) i_ariane (
 	.clk_i        ( sys_clk          ),
 	.rst_ni       ( ndmreset_n          ),
-	.boot_addr_i  ( ariane_soc::DRAMBase ), // start fetching from ROM
+	.boot_addr_i  ( ariane_soc::DRAMBase ), 
 	.hart_id_i    ( '0                  ),
 	.irq_i        ( irq                 ),
 	.ipi_i        ( ipi                 ),
@@ -375,28 +370,25 @@ ariane_peripherals #(
 	.AxiIdWidth   ( AxiIdWidthSlaves ),
 	.AxiUserWidth ( AxiUserWidth     ),
 	.InclUART     ( 1'b1             ),
-	.InclGPIO     ( 1'b1             ),
-
-	.InclSPI      ( 1'b0         ),
-	.InclEthernet ( 1'b0         )
+	.InclGPIO     ( 1'b1             )
 
 ) i_ariane_peripherals (
 	.clk_i        ( sys_clk                   ),
 	.rst_ni       ( ndmreset_n                   ),
 	.plic         ( master[ariane_soc::PLIC]     ),
 	.uart         ( master[ariane_soc::UART]     ),
-	.spi          ( master[ariane_soc::SPI]      ),
+	// .spi          ( master[ariane_soc::SPI]      ),
 	.gpio         ( master[ariane_soc::GPIO]     ),
-	.ethernet     ( master[ariane_soc::Ethernet] ),
+	// .ethernet     ( master[ariane_soc::Ethernet] ),
 	.timer        ( master[ariane_soc::Timer]    ),
 	.irq_o        ( irq                          ),
 	.rx_i         ( rx                           ),
 	.tx_o         ( tx                           ),
 
-	.spi_clk_o      (),
-	.spi_mosi       (),
-	.spi_miso       (),
-	.spi_ss         (),
+	// .spi_clk_o      (),
+	// .spi_mosi       (),
+	// .spi_miso       (),
+	// .spi_ss         (),
 
 	  .leds_o         ( led                       ),
 	  .dip_switches_i ( sw                        )
