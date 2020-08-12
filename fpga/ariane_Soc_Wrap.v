@@ -4,7 +4,7 @@ module ariane_Soc_Wrap (
 	input RSTn,
 
 	output [7:0] led,
-	input [7:0] sw,
+	// input [7:0] sw,
 
 (* X_INTERFACE_PARAMETER = "FREQ_HZ 30000000" *)
 	output wire [3 : 0] MEM_AXI_AWID,
@@ -69,7 +69,7 @@ ariane_xilinx bd_xilinx(
 	.RSTn(RSTn),
 
 	.led(led),
-	.sw(sw),
+	// .sw(sw),
 
 	.MEM_AXI_AWID(MEM_AXI_AWID),
 	.MEM_AXI_AWADDR(MEM_AXI_AWADDR),
