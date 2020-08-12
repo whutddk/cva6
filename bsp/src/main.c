@@ -1,5 +1,5 @@
 #include "uart.h"
-
+#include "gpio.h"
 
 int main()
 {
@@ -7,16 +7,21 @@ int main()
 
     // while(1)
     // {
-		print_uart("Wuhan University of Technology, 666!\r\n");
+		// print_uart("Wuhan University of Technology, 666!\r\n");
     // }
 
-	print_uart("Wuhan University of Technology, 666!\r\n");
-	print_uart("Wuhan University of Technology, 666!\r\n");
+	// print_uart("Wuhan University of Technology, 666!\r\n");
+	// print_uart("Wuhan University of Technology, 666!\r\n");
 
-	print_uart("Program End!\r\n");
+	gpio_write( 0xffffffff );
+
+	gpio_test();
+
+	// print_uart("Program End!\r\n");
+
 	while(1)
 	{
-		;
+		gpio_write( 0xffffffff );
 	}
 
 }

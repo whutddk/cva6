@@ -13,12 +13,6 @@ _prog_start:
   call main
   smp_resume(s1, s2)
   csrr a0, mhartid
-  la a1, _dtb
   li s1, DRAM_BASE
   jr s1
 
-  .section .dtb
-  .globl _dtb
-  .align 4, 0
-_dtb:
-  .incbin "ariane.dtb"

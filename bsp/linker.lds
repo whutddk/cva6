@@ -33,7 +33,6 @@ SECTIONS
     .rodata : ALIGN(0x100) {
     _RODATA_START_ = .;
         *(.rodata)
-        *(.dtb*)
         *(.rodata*)
     _RODATA_END_ = .;
     }
