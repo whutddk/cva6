@@ -17,10 +17,49 @@ module ariane_xilinx (
 
   input  logic         RSTn,
 
-  output logic [ 7:0]  led         ,
-  input  logic [ 7:0]  sw          ,
+	input logic [1:0] irq,
 
-// BUS
+	// PERIPHERALS BUS
+	output wire [3 : 0] PERIP_AXI_AWID,
+	output wire [63 : 0] PERIP_AXI_AWADDR,
+	output wire [7 : 0] PERIP_AXI_AWLEN,
+	output wire [2 : 0] PERIP_AXI_AWSIZE,
+	output wire [1 : 0] PERIP_AXI_AWBURST,
+	output wire PERIP_AXI_AWLOCK,
+	output wire [3 : 0] PERIP_AXI_AWCACHE,
+	output wire [2 : 0] PERIP_AXI_AWPROT,
+	output wire PERIP_AXI_AWVALID,
+	input wire  PERIP_AXI_AWREADY,
+	output wire [63 : 0] PERIP_AXI_WDATA,
+	output wire [7 : 0] PERIP_AXI_WSTRB,
+	output wire PERIP_AXI_WLAST,
+	output wire PERIP_AXI_WVALID,
+	input wire PERIP_AXI_WREADY,
+	input wire [3 : 0] PERIP_AXI_BID,
+	input wire [1 : 0] PERIP_AXI_BRESP,
+	input wire PERIP_AXI_BVALID,
+	output wire PERIP_AXI_BREADY,
+	output wire [3 : 0] PERIP_AXI_ARID,
+	output wire [63 : 0] PERIP_AXI_ARADDR,
+	output wire [7 : 0] PERIP_AXI_ARLEN,
+	output wire [2 : 0] PERIP_AXI_ARSIZE,
+	output wire [1 : 0] PERIP_AXI_ARBURST,
+	output wire  PERIP_AXI_ARLOCK,
+	output wire [3 : 0] PERIP_AXI_ARCACHE,
+	output wire [2 : 0] PERIP_AXI_ARPROT,
+	output wire  PERIP_AXI_ARVALID,
+	input wire  PERIP_AXI_ARREADY,
+	input wire [3 : 0] PERIP_AXI_RID,
+	input wire [63 : 0] PERIP_AXI_RDATA,
+	input wire [1 : 0] PERIP_AXI_RRESP,
+	input wire PERIP_AXI_RLAST,
+	input wire PERIP_AXI_RVALID,
+	output wire PERIP_AXI_RREADY,
+
+
+
+
+// MEMORY BUS
 
 	output wire [3 : 0] MEM_AXI_AWID,
 	output wire [63 : 0] MEM_AXI_AWADDR,
@@ -30,19 +69,18 @@ module ariane_xilinx (
 	output wire  MEM_AXI_AWLOCK,
 	output wire [3 : 0] MEM_AXI_AWCACHE,
 	output wire [2 : 0] MEM_AXI_AWPROT,
-	// output wire [3 : 0] MEM_AXI_AWQOS,
-// output wire [C_M_AXI_AWUSER_WIDTH-1 : 0] MEM_AXI_AWUSER,
+
 	output wire  MEM_AXI_AWVALID,
 	input wire  MEM_AXI_AWREADY,
 	output wire [63 : 0] MEM_AXI_WDATA,
 	output wire [7 : 0] MEM_AXI_WSTRB,
 	output wire  MEM_AXI_WLAST,
-// output wire [C_M_AXI_WUSER_WIDTH-1 : 0] MEM_AXI_WUSER,
+
 	output wire  MEM_AXI_WVALID,
 	input wire  MEM_AXI_WREADY,
 	input wire [3 : 0] MEM_AXI_BID,
 	input wire [1 : 0] MEM_AXI_BRESP,
-// input wire [C_M_AXI_BUSER_WIDTH-1 : 0] MEM_AXI_BUSER,
+
 	input wire  MEM_AXI_BVALID,
 	output wire  MEM_AXI_BREADY,
 	output wire [3 : 0] MEM_AXI_ARID,
@@ -53,15 +91,14 @@ module ariane_xilinx (
 	output wire  MEM_AXI_ARLOCK,
 	output wire [3 : 0] MEM_AXI_ARCACHE,
 	output wire [2 : 0] MEM_AXI_ARPROT,
-// 	output wire [3 : 0] MEM_AXI_ARQOS,
-// output wire [C_M_AXI_ARUSER_WIDTH-1 : 0] MEM_AXI_ARUSER,
+
 	output wire  MEM_AXI_ARVALID,
 	input wire  MEM_AXI_ARREADY,
 	input wire [3 : 0] MEM_AXI_RID,
 	input wire [63 : 0] MEM_AXI_RDATA,
 	input wire [1 : 0] MEM_AXI_RRESP,
 	input wire  MEM_AXI_RLAST,
-// input wire [C_M_AXI_RUSER_WIDTH-1 : 0] MEM_AXI_RUSER,
+
 	input wire  MEM_AXI_RVALID,
 	output wire  MEM_AXI_RREADY,
 
@@ -123,7 +160,7 @@ dm::dmi_resp_t debug_resp;
 logic dmactive;
 
 // IRQ
-logic [1:0] irq;
+
 assign test_en    = 1'b0;
 
 logic [NBSlave-1:0] pc_asserted;
@@ -155,24 +192,26 @@ axi_node_wrap_with_slices #(
 		ariane_soc::DebugBase,
 		// ariane_soc::ROMBase,
 		ariane_soc::CLINTBase,
-		ariane_soc::PLICBase,
+		ariane_soc::PERIPBase,
+		// ariane_soc::PLICBase,
 		ariane_soc::UARTBase,
-		ariane_soc::TimerBase,
+		// ariane_soc::TimerBase,
 		// ariane_soc::SPIBase,
 		// ariane_soc::EthernetBase,
-		ariane_soc::GPIOBase,
+		// ariane_soc::GPIOBase,
 		ariane_soc::DRAMBase
 	}),
 	.end_addr_i   ({
 		ariane_soc::DebugBase    + ariane_soc::DebugLength - 1,
 		// ariane_soc::ROMBase      + ariane_soc::ROMLength - 1,
 		ariane_soc::CLINTBase    + ariane_soc::CLINTLength - 1,
-		ariane_soc::PLICBase     + ariane_soc::PLICLength - 1,
+		ariane_soc::PERIPBase    + ariane_soc::PERIPLength - 1,
+		// ariane_soc::PLICBase     + ariane_soc::PLICLength - 1,
 		ariane_soc::UARTBase     + ariane_soc::UARTLength - 1,
-		ariane_soc::TimerBase    + ariane_soc::TimerLength - 1,
+		// ariane_soc::TimerBase    + ariane_soc::TimerLength - 1,
 		// ariane_soc::SPIBase      + ariane_soc::SPILength - 1,
 		// ariane_soc::EthernetBase + ariane_soc::EthernetLength -1,
-		ariane_soc::GPIOBase     + ariane_soc::GPIOLength - 1,
+		// ariane_soc::GPIOBase     + ariane_soc::GPIOLength - 1,
 		ariane_soc::DRAMBase     + ariane_soc::DRAMLength - 1
 	}),
 	.valid_rule_i (ariane_soc::ValidRule)
@@ -369,29 +408,21 @@ ariane_peripherals #(
 	.AxiDataWidth ( AxiDataWidth     ),
 	.AxiIdWidth   ( AxiIdWidthSlaves ),
 	.AxiUserWidth ( AxiUserWidth     ),
-	.InclUART     ( 1'b1             ),
-	.InclGPIO     ( 1'b1             )
+	.InclUART     ( 1'b1             )
 
 ) i_ariane_peripherals (
 	.clk_i        ( sys_clk                   ),
 	.rst_ni       ( ndmreset_n                   ),
-	.plic         ( master[ariane_soc::PLIC]     ),
+	// .plic         ( master[ariane_soc::PLIC]     ),
 	.uart         ( master[ariane_soc::UART]     ),
 	// .spi          ( master[ariane_soc::SPI]      ),
-	.gpio         ( master[ariane_soc::GPIO]     ),
+	// .gpio         ( master[ariane_soc::GPIO]     ),
 	// .ethernet     ( master[ariane_soc::Ethernet] ),
-	.timer        ( master[ariane_soc::Timer]    ),
-	.irq_o        ( irq                          ),
+	// .timer        ( master[ariane_soc::Timer]    ),
+	// .irq_o        ( irq                          ),
 	.rx_i         ( rx                           ),
-	.tx_o         ( tx                           ),
+	.tx_o         ( tx                           )
 
-	// .spi_clk_o      (),
-	// .spi_mosi       (),
-	// .spi_miso       (),
-	// .spi_ss         (),
-
-	  .leds_o         ( led                       ),
-	  .dip_switches_i ( sw                        )
 
 );
 
@@ -457,5 +488,45 @@ axi_riscv_atomics_wrap #(
 	assign dram.r_last = MEM_AXI_RLAST;
 	assign dram.r_valid = MEM_AXI_RVALID;
 	assign MEM_AXI_RREADY = dram.r_ready;
+
+
+	
+
+	assign PERIP_AXI_AWID = master[ariane_soc::PERIP].aw_id;
+	assign PERIP_AXI_AWADDR = master[ariane_soc::PERIP].aw_addr;
+	assign PERIP_AXI_AWLEN = master[ariane_soc::PERIP].aw_len;
+	assign PERIP_AXI_AWSIZE = master[ariane_soc::PERIP].aw_size;
+	assign PERIP_AXI_AWBURST = master[ariane_soc::PERIP].aw_burst;
+	assign PERIP_AXI_AWLOCK = master[ariane_soc::PERIP].aw_lock;
+	assign PERIP_AXI_AWCACHE = master[ariane_soc::PERIP].aw_cache;
+	assign PERIP_AXI_AWPROT = master[ariane_soc::PERIP].aw_prot;
+	assign PERIP_AXI_AWVALID = master[ariane_soc::PERIP].aw_valid;
+	assign master[ariane_soc::PERIP].aw_ready = PERIP_AXI_AWREADY;
+	assign PERIP_AXI_WDATA = master[ariane_soc::PERIP].w_data;
+	assign PERIP_AXI_WSTRB = master[ariane_soc::PERIP].w_strb;
+	assign PERIP_AXI_WLAST = master[ariane_soc::PERIP].w_last;
+	assign PERIP_AXI_WVALID = master[ariane_soc::PERIP].w_valid;
+	assign master[ariane_soc::PERIP].w_ready = PERIP_AXI_WREADY;
+	assign master[ariane_soc::PERIP].b_id = PERIP_AXI_BID;
+	assign master[ariane_soc::PERIP].b_resp = PERIP_AXI_BRESP;
+	assign master[ariane_soc::PERIP].b_valid = PERIP_AXI_BVALID;
+	assign PERIP_AXI_BREADY = master[ariane_soc::PERIP].b_ready;
+	assign PERIP_AXI_ARID = master[ariane_soc::PERIP].ar_id;
+	assign PERIP_AXI_ARADDR = master[ariane_soc::PERIP].ar_addr;
+	assign PERIP_AXI_ARLEN = master[ariane_soc::PERIP].ar_len;
+	assign PERIP_AXI_ARSIZE = master[ariane_soc::PERIP].ar_size;
+	assign PERIP_AXI_ARBURST = master[ariane_soc::PERIP].ar_burst;
+	assign PERIP_AXI_ARLOCK = master[ariane_soc::PERIP].ar_lock;
+	assign PERIP_AXI_ARCACHE = master[ariane_soc::PERIP].ar_cache;
+	assign PERIP_AXI_ARPROT = master[ariane_soc::PERIP].ar_prot;
+	assign PERIP_AXI_ARVALID = master[ariane_soc::PERIP].ar_valid;
+	assign master[ariane_soc::PERIP].ar_ready = PERIP_AXI_ARREADY;
+	assign master[ariane_soc::PERIP].r_id = PERIP_AXI_RID;
+	assign master[ariane_soc::PERIP].r_data = PERIP_AXI_RDATA;
+	assign master[ariane_soc::PERIP].r_resp = PERIP_AXI_RRESP;
+	assign master[ariane_soc::PERIP].r_last = PERIP_AXI_RLAST;
+	assign master[ariane_soc::PERIP].r_valid = PERIP_AXI_RVALID;
+	assign PERIP_AXI_RREADY = master[ariane_soc::PERIP].r_ready;
+
 
 endmodule
