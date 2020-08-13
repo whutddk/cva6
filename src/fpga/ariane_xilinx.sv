@@ -16,7 +16,8 @@ module ariane_xilinx (
   input  logic         sys_clk,
 
   input  logic         RSTn,
-
+	// IRQ
+	input logic [1:0] irq,
   // input  logic [ 7:0]  sw          ,
 
 
@@ -171,8 +172,7 @@ dm::dmi_resp_t debug_resp;
 
 logic dmactive;
 
-// IRQ
-logic [1:0] irq;
+
 assign test_en    = 1'b0;
 
 logic [NBSlave-1:0] pc_asserted;
@@ -204,9 +204,9 @@ axi_node_wrap_with_slices #(
 		ariane_soc::DebugBase,
 		// ariane_soc::ROMBase,
 		ariane_soc::CLINTBase,
-		ariane_soc::PLICBase,
+		// ariane_soc::PLICBase,
 		ariane_soc::UARTBase,
-		ariane_soc::TimerBase,
+		// ariane_soc::TimerBase,
 		// ariane_soc::SPIBase,
 		// ariane_soc::EthernetBase,
 		ariane_soc::GPIOBase,
@@ -216,9 +216,9 @@ axi_node_wrap_with_slices #(
 		ariane_soc::DebugBase    + ariane_soc::DebugLength - 1,
 		// ariane_soc::ROMBase      + ariane_soc::ROMLength - 1,
 		ariane_soc::CLINTBase    + ariane_soc::CLINTLength - 1,
-		ariane_soc::PLICBase     + ariane_soc::PLICLength - 1,
+		// ariane_soc::PLICBase     + ariane_soc::PLICLength - 1,
 		ariane_soc::UARTBase     + ariane_soc::UARTLength - 1,
-		ariane_soc::TimerBase    + ariane_soc::TimerLength - 1,
+		// ariane_soc::TimerBase    + ariane_soc::TimerLength - 1,
 		// ariane_soc::SPIBase      + ariane_soc::SPILength - 1,
 		// ariane_soc::EthernetBase + ariane_soc::EthernetLength -1,
 		ariane_soc::GPIOBase     + ariane_soc::GPIOLength - 1,
@@ -423,12 +423,12 @@ ariane_peripherals #(
 ) i_ariane_peripherals (
 	.clk_i        ( sys_clk                   ),
 	.rst_ni       ( ndmreset_n                   ),
-	.plic         ( master[ariane_soc::PLIC]     ),
+	// .plic         ( master[ariane_soc::PLIC]     ),
 	.uart         ( master[ariane_soc::UART]     ),
 	// .spi          ( master[ariane_soc::SPI]      ),
 	// .ethernet     ( master[ariane_soc::Ethernet] ),
-	.timer        ( master[ariane_soc::Timer]    ),
-	.irq_o        ( irq                          ),
+	// .timer        ( master[ariane_soc::Timer]    ),
+	// .irq_o        ( irq                          ),
 	.rx_i         ( rx                           ),
 	.tx_o         ( tx                           )
 

@@ -109,12 +109,13 @@ module ariane_Soc_Wrap (
 );
 
 
-
+wire [1:0] irq = 2'b0;
 
 ariane_xilinx bd_xilinx(
 	.sys_clk(sys_clk),
 	.RSTn(RSTn),
 
+	.irq(irq),
 	// .sw(sw),
 
     .PERIP_AXI_AWID(PERIP_AXI_AWID),
