@@ -209,7 +209,7 @@ axi_node_wrap_with_slices #(
 		// ariane_soc::TimerBase,
 		// ariane_soc::SPIBase,
 		// ariane_soc::EthernetBase,
-		ariane_soc::GPIOBase,
+		ariane_soc::PERIPBase,
 		ariane_soc::DRAMBase
 	}),
 	.end_addr_i   ({
@@ -221,7 +221,7 @@ axi_node_wrap_with_slices #(
 		// ariane_soc::TimerBase    + ariane_soc::TimerLength - 1,
 		// ariane_soc::SPIBase      + ariane_soc::SPILength - 1,
 		// ariane_soc::EthernetBase + ariane_soc::EthernetLength -1,
-		ariane_soc::GPIOBase     + ariane_soc::GPIOLength - 1,
+		ariane_soc::PERIPBase     + ariane_soc::PERIPLength - 1,
 		ariane_soc::DRAMBase     + ariane_soc::DRAMLength - 1
 	}),
 	.valid_rule_i (ariane_soc::ValidRule)
@@ -505,51 +505,51 @@ axi_riscv_atomics_wrap #(
 
 
 
-        assign PERIP_AXI_AWID = master[ariane_soc::GPIO].aw_id;
-        assign PERIP_AXI_AWADDR = master[ariane_soc::GPIO].aw_addr;
-        assign PERIP_AXI_AWLEN = master[ariane_soc::GPIO].aw_len;
-        assign PERIP_AXI_AWSIZE = master[ariane_soc::GPIO].aw_size;
-        assign PERIP_AXI_AWBURST = master[ariane_soc::GPIO].aw_burst;
-        assign PERIP_AXI_AWLOCK = master[ariane_soc::GPIO].aw_lock;
-        assign PERIP_AXI_AWCACHE = master[ariane_soc::GPIO].aw_cache;
-        assign PERIP_AXI_AWPROT = master[ariane_soc::GPIO].aw_prot;
-        assign PERIP_AXI_AWVALID = master[ariane_soc::GPIO].aw_valid;
-        assign master[ariane_soc::GPIO].aw_ready = PERIP_AXI_AWREADY;
-        assign PERIP_AXI_WDATA = master[ariane_soc::GPIO].w_data;
-        assign PERIP_AXI_WSTRB = master[ariane_soc::GPIO].w_strb;
-        assign PERIP_AXI_WLAST = master[ariane_soc::GPIO].w_last;
-        assign PERIP_AXI_WVALID = master[ariane_soc::GPIO].w_valid;
-        assign master[ariane_soc::GPIO].w_ready = PERIP_AXI_WREADY;
-        assign master[ariane_soc::GPIO].b_id = PERIP_AXI_BID;
-        assign master[ariane_soc::GPIO].b_resp = PERIP_AXI_BRESP;
-        assign master[ariane_soc::GPIO].b_valid = PERIP_AXI_BVALID;
-        assign PERIP_AXI_BREADY = master[ariane_soc::GPIO].b_ready;
-        assign PERIP_AXI_ARID = master[ariane_soc::GPIO].ar_id;
-        assign PERIP_AXI_ARADDR = master[ariane_soc::GPIO].ar_addr;
-        assign PERIP_AXI_ARLEN = master[ariane_soc::GPIO].ar_len;
-        assign PERIP_AXI_ARSIZE = master[ariane_soc::GPIO].ar_size;
-        assign PERIP_AXI_ARBURST = master[ariane_soc::GPIO].ar_burst;
-        assign PERIP_AXI_ARLOCK = master[ariane_soc::GPIO].ar_lock;
-        assign PERIP_AXI_ARCACHE = master[ariane_soc::GPIO].ar_cache;
-        assign PERIP_AXI_ARPROT = master[ariane_soc::GPIO].ar_prot;
-        assign PERIP_AXI_ARVALID = master[ariane_soc::GPIO].ar_valid;
-        assign master[ariane_soc::GPIO].ar_ready = PERIP_AXI_ARREADY;
-        assign master[ariane_soc::GPIO].r_id = PERIP_AXI_RID;
-        assign master[ariane_soc::GPIO].r_data = PERIP_AXI_RDATA;
-        assign master[ariane_soc::GPIO].r_resp = PERIP_AXI_RRESP;
-        assign master[ariane_soc::GPIO].r_last = PERIP_AXI_RLAST;
-        assign master[ariane_soc::GPIO].r_valid = PERIP_AXI_RVALID;
-        assign PERIP_AXI_RREADY = master[ariane_soc::GPIO].r_ready;
+    assign PERIP_AXI_AWID = master[ariane_soc::PERIP].aw_id;
+    assign PERIP_AXI_AWADDR = master[ariane_soc::PERIP].aw_addr;
+    assign PERIP_AXI_AWLEN = master[ariane_soc::PERIP].aw_len;
+    assign PERIP_AXI_AWSIZE = master[ariane_soc::PERIP].aw_size;
+    assign PERIP_AXI_AWBURST = master[ariane_soc::PERIP].aw_burst;
+    assign PERIP_AXI_AWLOCK = master[ariane_soc::PERIP].aw_lock;
+    assign PERIP_AXI_AWCACHE = master[ariane_soc::PERIP].aw_cache;
+    assign PERIP_AXI_AWPROT = master[ariane_soc::PERIP].aw_prot;
+    assign PERIP_AXI_AWVALID = master[ariane_soc::PERIP].aw_valid;
+    assign master[ariane_soc::PERIP].aw_ready = PERIP_AXI_AWREADY;
+    assign PERIP_AXI_WDATA = master[ariane_soc::PERIP].w_data;
+    assign PERIP_AXI_WSTRB = master[ariane_soc::PERIP].w_strb;
+    assign PERIP_AXI_WLAST = master[ariane_soc::PERIP].w_last;
+    assign PERIP_AXI_WVALID = master[ariane_soc::PERIP].w_valid;
+    assign master[ariane_soc::PERIP].w_ready = PERIP_AXI_WREADY;
+    assign master[ariane_soc::PERIP].b_id = PERIP_AXI_BID;
+    assign master[ariane_soc::PERIP].b_resp = PERIP_AXI_BRESP;
+    assign master[ariane_soc::PERIP].b_valid = PERIP_AXI_BVALID;
+    assign PERIP_AXI_BREADY = master[ariane_soc::PERIP].b_ready;
+    assign PERIP_AXI_ARID = master[ariane_soc::PERIP].ar_id;
+    assign PERIP_AXI_ARADDR = master[ariane_soc::PERIP].ar_addr;
+    assign PERIP_AXI_ARLEN = master[ariane_soc::PERIP].ar_len;
+    assign PERIP_AXI_ARSIZE = master[ariane_soc::PERIP].ar_size;
+    assign PERIP_AXI_ARBURST = master[ariane_soc::PERIP].ar_burst;
+    assign PERIP_AXI_ARLOCK = master[ariane_soc::PERIP].ar_lock;
+    assign PERIP_AXI_ARCACHE = master[ariane_soc::PERIP].ar_cache;
+    assign PERIP_AXI_ARPROT = master[ariane_soc::PERIP].ar_prot;
+    assign PERIP_AXI_ARVALID = master[ariane_soc::PERIP].ar_valid;
+    assign master[ariane_soc::PERIP].ar_ready = PERIP_AXI_ARREADY;
+    assign master[ariane_soc::PERIP].r_id = PERIP_AXI_RID;
+    assign master[ariane_soc::PERIP].r_data = PERIP_AXI_RDATA;
+    assign master[ariane_soc::PERIP].r_resp = PERIP_AXI_RRESP;
+    assign master[ariane_soc::PERIP].r_last = PERIP_AXI_RLAST;
+    assign master[ariane_soc::PERIP].r_valid = PERIP_AXI_RVALID;
+    assign PERIP_AXI_RREADY = master[ariane_soc::PERIP].r_ready;
 
-    assign PERIP_AXI_AWUSER = master[ariane_soc::GPIO].aw_user;
-    assign PERIP_AXI_AWQOS = master[ariane_soc::GPIO].aw_qos;
-    assign PERIP_AXI_WUSER = master[ariane_soc::GPIO].w_user;
-    assign master[ariane_soc::GPIO].b_user = PERIP_AXI_BUSER;
-    assign PERIP_AXI_ARUSER = master[ariane_soc::GPIO].ar_user;
-    assign PERIP_AXI_ARQOS = master[ariane_soc::GPIO].ar_qos;
-    assign master[ariane_soc::GPIO].r_user = PERIP_AXI_RUSER;
-    assign PERIP_AXI_AWREGION = master[ariane_soc::GPIO].aw_region;
-    assign PERIP_AXI_ARREGION = master[ariane_soc::GPIO].ar_region;
+    assign PERIP_AXI_AWUSER = master[ariane_soc::PERIP].aw_user;
+    assign PERIP_AXI_AWQOS = master[ariane_soc::PERIP].aw_qos;
+    assign PERIP_AXI_WUSER = master[ariane_soc::PERIP].w_user;
+    assign master[ariane_soc::PERIP].b_user = PERIP_AXI_BUSER;
+    assign PERIP_AXI_ARUSER = master[ariane_soc::PERIP].ar_user;
+    assign PERIP_AXI_ARQOS = master[ariane_soc::PERIP].ar_qos;
+    assign master[ariane_soc::PERIP].r_user = PERIP_AXI_RUSER;
+    assign PERIP_AXI_AWREGION = master[ariane_soc::PERIP].aw_region;
+    assign PERIP_AXI_ARREGION = master[ariane_soc::PERIP].ar_region;
 
 
 
