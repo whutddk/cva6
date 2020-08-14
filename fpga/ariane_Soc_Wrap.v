@@ -2,6 +2,8 @@
 module ariane_Soc_Wrap (
 	input sys_clk,
 	input RSTn,
+	
+	input irq,
 
 
 (* X_INTERFACE_PARAMETER = "FREQ_HZ 30000000" *)
@@ -102,20 +104,18 @@ module ariane_Soc_Wrap (
 	input tck,
 	input tms,
 	input tdi,
-	output tdo,
-	input rx,
-	output tx
+	output tdo
 	
 );
 
 
-wire [1:0] irq = 2'b0;
+
 
 ariane_xilinx bd_xilinx(
 	.sys_clk(sys_clk),
 	.RSTn(RSTn),
 
-	.irq(irq),
+	.irq({irq,1'b0}),
 	// .sw(sw),
 
     .PERIP_AXI_AWID(PERIP_AXI_AWID),
@@ -209,9 +209,7 @@ ariane_xilinx bd_xilinx(
 	.tck(tck),
 	.tms(tms),
 	.tdi(tdi),
-	.tdo(tdo),
-	.rx(rx),
-	.tx(tx)
+	.tdo(tdo)
 );
 
 

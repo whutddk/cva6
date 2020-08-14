@@ -120,9 +120,7 @@ module ariane_xilinx (
   input  logic        tck         ,
   input  logic        tms         ,
   input  logic        tdi         ,
-  output wire         tdo         ,
-  input  logic        rx          ,
-  output logic        tx
+  output wire         tdo         
 );
 // 24 MByte in 8 byte words
 localparam NumWords = (24 * 1024 * 1024) / 8;
@@ -205,7 +203,7 @@ axi_node_wrap_with_slices #(
 		// ariane_soc::ROMBase,
 		ariane_soc::CLINTBase,
 		// ariane_soc::PLICBase,
-		ariane_soc::UARTBase,
+		// ariane_soc::UARTBase,
 		// ariane_soc::TimerBase,
 		// ariane_soc::SPIBase,
 		// ariane_soc::EthernetBase,
@@ -217,7 +215,7 @@ axi_node_wrap_with_slices #(
 		// ariane_soc::ROMBase      + ariane_soc::ROMLength - 1,
 		ariane_soc::CLINTBase    + ariane_soc::CLINTLength - 1,
 		// ariane_soc::PLICBase     + ariane_soc::PLICLength - 1,
-		ariane_soc::UARTBase     + ariane_soc::UARTLength - 1,
+		// ariane_soc::UARTBase     + ariane_soc::UARTLength - 1,
 		// ariane_soc::TimerBase    + ariane_soc::TimerLength - 1,
 		// ariane_soc::SPIBase      + ariane_soc::SPILength - 1,
 		// ariane_soc::EthernetBase + ariane_soc::EthernetLength -1,
@@ -407,32 +405,6 @@ clint #(
 );
 
 axi_slave_connect i_axi_slave_connect_clint (.axi_req_o(axi_clint_req), .axi_resp_i(axi_clint_resp), .slave(master[ariane_soc::CLINT]));
-
-// ---------------
-// Peripherals
-// ---------------
-
-
-ariane_peripherals #(
-	.AxiAddrWidth ( AxiAddrWidth     ),
-	.AxiDataWidth ( AxiDataWidth     ),
-	.AxiIdWidth   ( AxiIdWidthSlaves ),
-	.AxiUserWidth ( AxiUserWidth     ),
-	.InclUART     ( 1'b1             )
-
-) i_ariane_peripherals (
-	.clk_i        ( sys_clk                   ),
-	.rst_ni       ( ndmreset_n                   ),
-	// .plic         ( master[ariane_soc::PLIC]     ),
-	.uart         ( master[ariane_soc::UART]     ),
-	// .spi          ( master[ariane_soc::SPI]      ),
-	// .ethernet     ( master[ariane_soc::Ethernet] ),
-	// .timer        ( master[ariane_soc::Timer]    ),
-	// .irq_o        ( irq                          ),
-	.rx_i         ( rx                           ),
-	.tx_o         ( tx                           )
-
-);
 
 
 // ---------------------

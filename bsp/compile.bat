@@ -7,19 +7,24 @@ md .\build
 
 @rem compile .c
 riscv64-unknown-elf-gcc -Os -ggdb -march=rv64imac -mabi=lp64 -Wall -mcmodel=medany -mexplicit-relocs ^
--I ./ -I ./src -I ./axi_gpio ^
+-I ./ -I ./src -I ./axi_gpio -I ./axi_uart ^
 -c ./src/main.c ^
 -o ./build/main.o
 
 riscv64-unknown-elf-gcc -Os -ggdb -march=rv64imac -mabi=lp64 -Wall -mcmodel=medany -mexplicit-relocs ^
 -I ./ -I ./src ^
--c ./src/uart.c ^
+-c ./axi_uart/uart.c ^
 -o ./build/uart.o
 
 riscv64-unknown-elf-gcc -Os -ggdb -march=rv64imac -mabi=lp64 -Wall -mcmodel=medany -mexplicit-relocs ^
 -I ./ -I ./src -I ./axi_gpio ^
 -c ./axi_gpio/gpio.c ^
 -o ./build/gpio.o
+
+riscv64-unknown-elf-gcc -Os -ggdb -march=rv64imac -mabi=lp64 -Wall -mcmodel=medany -mexplicit-relocs ^
+-I ./ -I ./src -I ./axi_uart ^
+-c ./axi_uart/uart.c ^
+-o ./build/uart.o
 
 @rem riscv64-unknown-elf-gcc -Os -ggdb -march=rv64imac -mabi=lp64 -Wall -mcmodel=medany -mexplicit-relocs ^
 @rem -I./ -I ./src^ 
@@ -55,6 +60,7 @@ riscv64-unknown-elf-gcc -Os -ggdb -march=rv64imac -mabi=lp64 -Wall -mcmodel=meda
 -o software.elf
 
 
+@pause
 
 
 
