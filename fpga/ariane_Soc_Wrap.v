@@ -6,7 +6,7 @@ module ariane_Soc_Wrap (
 	input irq,
 
 
-(* X_INTERFACE_PARAMETER = "FREQ_HZ 30000000" *)
+(* X_INTERFACE_PARAMETER = "FREQ_HZ 33333336" *)
     output wire [3 : 0] PERIP_AXI_AWID,
     output wire [63 : 0] PERIP_AXI_AWADDR,
     output wire [7 : 0] PERIP_AXI_AWLEN,
@@ -53,7 +53,7 @@ module ariane_Soc_Wrap (
     output wire [3:0] PERIP_AXI_ARREGION,
 
 
-(* X_INTERFACE_PARAMETER = "FREQ_HZ 30000000" *)
+(* X_INTERFACE_PARAMETER = "FREQ_HZ 33333336" *)
 	output wire [3 : 0] MEM_AXI_AWID,
 	output wire [63 : 0] MEM_AXI_AWADDR,
 	output wire [7 : 0] MEM_AXI_AWLEN,
